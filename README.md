@@ -39,7 +39,7 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
 Pavlos Parmigianopapas, Pavlos Ricottapapas and Pavlos Gouda-papas
 
 **Group Name**
-The Grate Cheese Group
+3H2B
 
 **Project**
 In this project, we aim to develop an AI-powered cheese application. The app will feature visual recognition technology to identify various types of cheese and include a chatbot for answering all kinds of cheese-related questions. Users can simply take a photo of the cheese, and the app will identify it, providing detailed information. Additionally, the chatbot will allow users to ask cheese-related questions. It will be powered by a RAG model and fine-tuned models, making it a specialist in cheese expertise.
@@ -90,3 +90,5 @@ This folder contains code that is not part of container - for e.g: Application m
 
 ----
 You may adjust this template as appropriate for your project.
+
+**Application Mockup Design**
