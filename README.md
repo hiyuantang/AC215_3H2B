@@ -1,36 +1,45 @@
-## Milestone 2 Template
-
-```
-The files are empty placeholders only. You may adjust this template as appropriate for your project.
-Never commit large data files,trained models, personal API Keys/secrets to GitHub
-```
-
 #### Project Milestone 2 Organization
 
 ```
 ├── Readme.md
-├── data # DO NOT UPLOAD DATA TO GITHUB, only .gitkeep to keep the directory or a really small sample
+├── data
 ├── notebooks
 │   └── eda.ipynb
 ├── references
 ├── reports
 │   └── Statement of Work_Sample.pdf
 └── src
-    ├── datapipeline
+    ├── data-versioning
     │   ├── Dockerfile
     │   ├── Pipfile
     │   ├── Pipfile.lock
-    │   ├── dataloader.py
+    │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
-    │   ├── preprocess_cv.py
-    │   ├── preprocess_rag.py
+    ├── dataset-creator
+    │   ├── data
+    │   │   ├── *.dvc
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── cli.py
+    │   ├── docker-entrypoint.sh
+    │   ├── docker-shell.sh
+    ├── gemini-finetuner
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── cli.py
+    │   ├── docker-entrypoint.sh
+    │   ├── docker-shell.sh
+    ├── rag
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── cli.py
+    │   ├── docker-entrypoint.sh
+    │   ├── docker-shell.sh
     ├── docker-compose.yml
-    └── models
-        ├── Dockerfile
-        ├── docker-shell.sh
-        ├── infer_model.py
-        ├── model_rag.py
-        └── train_model.py
+
 ```
 
 # AC215 - Milestone2 - LLM-powered Trip Planner App
