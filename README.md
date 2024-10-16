@@ -92,19 +92,19 @@ The container is responsible for versioning both the Strict Format Dataset and t
 
 The container generates the 500 question & answer pairs dataset by providing appropriate instruction to prompt Gemini 1.5 flash 002 model to produce pairs in json format. Then, these json format *.txt files will be converted to *.csv and jsonl file and split into train and test sets for finetuning training and validation purpose. Both *.csv and *.jsonl files will be uploaded to GCS bucket. 
 
-- To generate question & answer pairs, we use the command: `python cli.py --generate`
-- To split the dataset and convert it into *.csv and *.jsonl formats, we use the command: `python cli.py --prepare`
-- To upload the dataset to the GCS bucket, we use the command: `python cli.py --upload`
+- To generate question & answer pairs - `python cli.py --generate`
+- To split the dataset and convert it into *.csv and *.jsonl formats - `python cli.py --prepare`
+- To upload the dataset to the GCS bucket - `python cli.py --upload`
 - Once we generate a new version of the Strict Format Dataset, the next step is to use the Data Versioning container for version control. We follow the steps to `dvc add`, then `git add .`, `git commit`, and finally`dvc push`.
 
 **Gemini Finetuner Container**
 
-The container use the Strict Format Dataset, which contains 500 question & answer pairs, to fine-tune a Gemini 1.5 flash 002 model. 
+The container use the Strict Format Dataset from the GCS bucket, which contains 500 question & answer pairs, to fine-tune a Gemini 1.5 flash 002 model. 
 
-- To finetune the model, we use the command: `python cli.py --train`
-- To chat with the finetuned model, we use the command: `python cli.py --chat`
-- To delete finetuned model, we use the command: `python cli.py --delete_model`
-- To delete the tuning job, we use the command: `python cli.py --delete_hyperparameter_tuning_job`
+- To finetune the model - `python cli.py --train`
+- To chat with the finetuned model - `python cli.py --chat`
+- To delete finetuned model - `python cli.py --delete_model`
+- To delete the tuning job - `python cli.py --delete_hyperparameter_tuning_job`
 
 Specifically, the configuration we use for finetuning is: `epochs=6` `adapter_size=4` `learning_rate_multiplier=1.0`
 
