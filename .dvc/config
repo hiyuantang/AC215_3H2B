@@ -1,2 +1,2 @@
-['remote "strict_format_dataset"']
-    url = gs://strict-format-dataset/dvc_store
+['remote "llm_strict_format_dataset"']
+    url = gs://llm-strict-format-dataset/dvc_store
