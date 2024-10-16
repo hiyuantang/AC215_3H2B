@@ -108,25 +108,14 @@ The container use the Strict Format Dataset, which contains 500 question & answe
 
 Specifically, the configuration we use for finetuning is: `epochs=6` `adapter_size=4` `learning_rate_multiplier=1.0`
 
-## Data Pipeline Overview
-
-1. **`src/datapipeline/preprocess_cv.py`**
-   This script handles preprocessing on our 100GB dataset. It reduces the image sizes to 128x128 (a parameter that can be changed later) to enable faster iteration during processing. The preprocessed dataset is now reduced to 10GB and stored on GCS.
-
-2. **`src/datapipeline/preprocess_rag.py`**
-   This script prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
-
-3. **`src/datapipeline/Pipfile`**
-   We used the following packages to help with preprocessing:
-   - `special cheese package`
-
-4. **`src/preprocessing/Dockerfile(s)`**
-   Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
-
-
 ## Running Dockerfile
-Instructions for running the Dockerfile can be added here.
-To run Dockerfile - `Instructions here`
+Instructions for running the individual Dockerfile. 
+- `cd` into the directory such as `data-versioning`, `dataset-creator`, `gemini-finetuner`, or `rag`
+- Make sure you have the perssion to run the file. You may - `chmod +x *.sh`
+- To run Dockerfile - `./docker-shell.sh`
+
+Instructions for running all the Dockerfile at once. 
+- xxxxxxxxxx
 
 **Models container**
 - This container has scripts for model training, rag pipeline and inference
