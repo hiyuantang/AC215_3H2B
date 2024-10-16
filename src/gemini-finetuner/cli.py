@@ -6,7 +6,7 @@ import time
 import glob
 from google.cloud import storage, aiplatform
 import vertexai
-from vertexai.tuning import sft
+from vertexai.preview.tuning import sft
 from vertexai.generative_models import GenerativeModel, GenerationConfig
 
 # Setup
@@ -62,7 +62,7 @@ def chat():
     
     generative_model = GenerativeModel(MODEL_ENDPOINT)
 
-    query = '''I'm looking for a concise 2-day family bonding Itinerary in Tokyo for May.  Can you give me an extremely concise itinerary with only days and locations?'''
+    query = '''Location:  New Orleans, Days: 4, month: April, type: Boring. How can I craft a concise itinerary with only days and locations that makes me feel bored in New Orleans in April?'''
     
     print("query: ",query)
     response = generative_model.generate_content(
