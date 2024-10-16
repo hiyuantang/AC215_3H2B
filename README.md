@@ -58,10 +58,12 @@ In this project, we’re developing an LLM-powered travel planner application. T
 
 ### Milestone2 ###
 
-In this milestone, we have the components for data management, including versioning, as well as the computer vision and language models.
+In this milestone, we have the components for data versioning, data creation, LLM fine-tuning, and RAG. 
 
-**Data**
-We gathered a dataset of 100,000 cheese images representing approximately 1,500 different varieties. The dataset, approximately 100GB in size, was collected from the following sources: (1), (2), (3). We have stored it in a private Google Cloud Bucket.
+**Strict Format Dataset**
+We generated a dataset of 500 pairs of question and answer pairs for fine-tuning the gemini 1.5 flash model behave in a way that facilitate us extract days, theme, and location information. 
+
+The dataset, approximately 100GB in size, was collected from the following sources: (1), (2), (3). We have stored it in a private Google Cloud Bucket.
 Additionally, we compiled 250 bibliographical sources on cheese, including books and reports, from sources such as (4) and (5).
 
 **Data Pipeline Containers**
