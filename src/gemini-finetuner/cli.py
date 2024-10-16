@@ -6,7 +6,7 @@ import time
 import glob
 from google.cloud import storage, aiplatform
 import vertexai
-from vertexai.preview.tuning import sft
+from vertexai.tuning import sft
 from vertexai.generative_models import GenerativeModel, GenerationConfig
 
 # Setup
@@ -35,7 +35,7 @@ def train(wait_for_job=False):
         epochs=6, # change to 2-3
         adapter_size=4,
         learning_rate_multiplier=1.0,
-        tuned_model_display_name="strict-format-v2",
+        tuned_model_display_name="strict-format",
     )
     print("Training job started. Monitoring progress...\n\n")
     
@@ -58,8 +58,7 @@ def train(wait_for_job=False):
 
 def chat():
     print("chat()")
-    # Get the model endpoint from Vertex AI: https://console.cloud.google.com/vertex-ai/studio/tuning?project=ac215-project
-    MODEL_ENDPOINT = "projects/682865987385/locations/us-central1/endpoints/2243233518593245184" # Finetuned model
+    MODEL_ENDPOINT = "projects/184619367894/locations/us-central1/endpoints/8964855962443710464" # Finetuned model
     
     generative_model = GenerativeModel(MODEL_ENDPOINT)
 
@@ -104,7 +103,7 @@ def delete_hyperparameter_tuning_job():
     name = client.hyperparameter_tuning_job_path(
         project="682865987385",
         location=GCP_LOCATION,
-        hyperparameter_tuning_job="727476028678602752",
+        hyperparameter_tuning_job="5638299578605240320",
     )
     response = client.delete_hyperparameter_tuning_job(name=name)
     print("Long running operation:", response.operation.name)
