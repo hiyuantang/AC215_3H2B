@@ -33,10 +33,10 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
         └── train_model.py
 ```
 
-# AC215 - Milestone2 - Cheesy App
+# AC215 - Milestone2 - LLM-powered Trip Planner App
 
 **Team Members**
-Pavlos Parmigianopapas, Pavlos Ricottapapas and Pavlos Gouda-papas
+Yuan Tang
 
 **Group Name**
 3H2B
