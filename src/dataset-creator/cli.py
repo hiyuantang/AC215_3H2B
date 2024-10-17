@@ -12,10 +12,10 @@ import vertexai.generative_models as generative_models
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
-GCP_LOCATION = "us-central1"
+GCP_LOCATION = os.environ["GCP_LOCATION"]
+GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
 GENERATIVE_MODEL = "gemini-1.5-flash-001"
 OUTPUT_FOLDER = "data"
-GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
 # Configuration settings for the content generation
 generation_config = {
     "max_output_tokens": 8192,  # Maximum number of tokens for output
