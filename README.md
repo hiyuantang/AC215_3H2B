@@ -37,7 +37,7 @@
     │   ├── cli.py
     ├── frontend
     │   ├── src/app
-    │   │   ├── *.
+    │   │   ├── *
     │   ├── .dockerignore
     │   ├── .eslintrc.json
     │   ├── .gitignore
