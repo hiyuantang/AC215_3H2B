@@ -16,7 +16,7 @@ services:
         depends_on:
             - chromadb
     chromadb:
-        image: chromadb/chroma:latest
+        image: chromadb/chroma:0.5.6
         container_name: llm-rag-chromadb
         ports:
             - 8000:8000
