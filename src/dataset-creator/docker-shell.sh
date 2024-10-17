@@ -6,7 +6,7 @@ set -e
 # Read the settings file
 source ../env.dev
 
-export IMAGE_NAME="llm-dataset-creator"
+export IMAGE_NAME="dataset-creator"
 
 # Build the image based on the Dockerfile
 docker build -t $IMAGE_NAME -f Dockerfile .
