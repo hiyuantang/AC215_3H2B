@@ -36,15 +36,15 @@ export default function HomePage() {
                 </Text>
                 <form onSubmit={handleSubmit}>
                     <VStack spacing={6} align="stretch">
-                        <FormControl id="country">
+                        <FormControl id="city">
                             <FormLabel fontWeight="bold" color="gray.600">
-                                Select Country
+                                Select City
                             </FormLabel>
-                            <Select placeholder="Choose a country" borderColor="orange.400">
-                                <option value="usa">USA</option>
-                                <option value="canada">Canada</option>
-                                <option value="france">France</option>
-                                <option value="japan">Singapore</option>
+                            <Select placeholder="Choose a city" borderColor="orange.400">
+                                <option value="london">London</option>
+                                <option value="manchester">Manchester</option>
+                                <option value="birmingham">Birmingham</option>
+                                <option value="edinburgh">Edinburgh</option>
                             </Select>
                         </FormControl>
                         <FormControl id="trip-type">

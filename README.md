@@ -126,6 +126,20 @@ The container use the Strict Format Dataset from the GCS bucket, which contains 
 
 Specifically, the configuration we use for finetuning is: `epochs=6` `adapter_size=4` `learning_rate_multiplier=1.0`
 
+**Route Optimizer Container**
+
+The container accepts a list of location names, retrieves their coordinates using the Geopy API, and calculates the optimal route between them using a greedy nearest-neighbor algorithm. The first location is randomly selected and the remaining locations are ordered by the shortest distance from the previous stop.
+
+- To get the latitude and longitude of the locations and optimize the route: `python cli.py "Location1" "Location2" "Location3" ...`
+- The CLI outputs the optimal order of locations starting from a random point and following the shortest path to the next location.
+
+**Trip Advisor frontend Container**
+
+This frontend allows users to input trip details, including destination city, type of trip, and travel dates. Once submitted, the user is redirected to a page that displays a map with trip suggestions based on the model. The map shows optimized routes between locations, and users can view details such as travel times, locations, reasons for each stop, and travel tips.
+
+- To select travel preferences and submit the form, users can interact with dropdowns and date pickers in the UI.
+- The map visualizes the generated trip itinerary, showing location routes and travel recommendations.
+
 ## Running Dockerfile
 Instructions for running the individual Dockerfile. 
 - `cd` into the directory such as `data-versioning`, `dataset-creator`, `gemini-finetuner`, or `rag`
