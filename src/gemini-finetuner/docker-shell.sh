@@ -9,7 +9,7 @@ source ../env.dev
 export IMAGE_NAME="gemini-finetuner"
 
 # Build the image based on the Dockerfile
-docker build -t $IMAGE_NAME -f Dockerfile .
+# docker build -t $IMAGE_NAME -f Dockerfile .
 
 # Run Container
 docker run --rm --name $IMAGE_NAME -ti \
@@ -18,4 +18,5 @@ docker run --rm --name $IMAGE_NAME -ti \
 -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
 -e GCP_PROJECT=$GCP_PROJECT \
 -e GCS_BUCKET_NAME=$GCS_BUCKET_NAME \
+-e GCP_LOCATION=$GCP_LOCATION \
 $IMAGE_NAME

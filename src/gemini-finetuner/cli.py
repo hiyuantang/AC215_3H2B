@@ -11,9 +11,9 @@ from vertexai.generative_models import GenerativeModel, GenerationConfig
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
+GCP_LOCATION = os.environ["GCP_LOCATION"]
 TRAIN_DATASET = "gs://strict-format-dataset/llm-finetune-dataset/train.jsonl" # Replace with your dataset
 VALIDATION_DATASET = "gs://strict-format-dataset/llm-finetune-dataset/test.jsonl" # Replace with your dataset
-GCP_LOCATION = "us-central1"
 GENERATIVE_SOURCE_MODEL = "gemini-1.5-flash-002" # gemini-1.5-pro-002
 # Configuration settings for the content generation
 generation_config = {
