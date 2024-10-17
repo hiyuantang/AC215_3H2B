@@ -1,0 +1,70 @@
+networks:
+    default:
+        name: llm-rag-network
+        external: true
+services:
+    llm-rag-cli:
+        image: llm-rag-cli
+        container_name: llm-rag-cli
+        volumes:
+            - ../secrets:/secrets
+            - llm-rag:/app
+        environment:
+            GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
+            GCP_PROJECT: $GCP_PROJECT
+            GCP_LOCATION: $GCP_LOCATION
+        depends_on:
+            - chromadb
+    chromadb:
+        image: chromadb/chroma:0.5.6
+        container_name: llm-rag-chromadb
+        ports:
+            - 8000:8000
+        volumes:
+            - ./docker-volumes/chromadb:/chroma/chroma
+        environment:
+            - IS_PERSISTENT=TRUE
+            - ANONYMIZED_TELEMETRY=FALSE
+            - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"] # This is not recommended for production environments.
+    gemini-finetuner:
+        image: gemini-finetuner
+        container_name: gemini-finetuner
+        volumes:
+            - ../secrets:/secrets
+            - gemini-finetuner:/app
+        environment:
+            GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
+            GCP_PROJECT: $GCP_PROJECT
+            GCP_LOCATION: $GCP_LOCATION
+            GCS_BUCKET_NAME: $GCS_BUCKET_NAME
+    data-versioning:
+        image: data-versioning
+        container_name: data-versioning
+        volumes:
+            - ../secrets:/secrets
+            - $REPO_DIR:/app
+            - ~/.gitconfig:/etc/gitconfig
+        environment:
+            GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
+            GCP_PROJECT: $GCP_PROJECT
+            GCP_LOCATION: $GCP_LOCATION
+            GCP_ZONE: $GCP_ZONE
+            GCS_BUCKET_NAME: $GCS_BUCKET_NAME
+        privileged: true
+        cap_add:
+        - SYS_ADMIN
+        devices:
+        - /dev/fuse
+    dataset-creator:
+        image: dataset-creator
+        container_name: dataset-creator
+        volumes:
+            - ../secrets:/secrets
+            - dataset-creator:/app
+        environment:
+            GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
+            GCP_PROJECT: $GCP_PROJECT
+            GCP_LOCATION: $GCP_LOCATION
+            GCS_BUCKET_NAME: $GCS_BUCKET_NAME
+
+    
