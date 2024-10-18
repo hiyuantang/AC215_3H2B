@@ -186,13 +186,13 @@ Make sure to replace <message> with the actual git commit message.
 
 **Data Creator Container**
 
-The container generates the 500 question & answer pairs dataset (Strict Format Dataset) by providing appropriate instruction to prompt `Gemini 1.5 flash 002` model to produce pairs in json format. Then, these json format *.txt files will be converted to *.csv and jsonl file and split into train and test sets for finetuning training and validation purpose. Both *.csv and *.jsonl files will be uploaded to GCS bucket. 
+The container generates the 500 question & answer pairs dataset, `Strict Format Dataset`, by providing appropriate instruction to prompt `Gemini 1.5 flash 002` model to produce pairs in `json` format `*.txt` files. Then, these `*.txt` files will be converted to `*.csv` and `*.jsonl` file and split into train and test sets for finetuning training and validation purpose. Both `*.csv` and `*.jsonl` files will be uploaded to GCS bucket. 
 
 1. To generate question & answer pairs and save the data in *.txt files:<br />
    `python cli.py --generate`
 2. To save data generation prompt in save it as `sys-instruct.csv`:<br />
    `python cli.py --save_prompt`
-4. To prepare data for the Gemini Model, which will split the data into train and test sets and save it in `csv` and `jsonl` formats:<br />
+4. To prepare data for the Gemini Model, which will split the data into train and test sets and save it in `.csv` and `.jsonl` formats:<br />
    `python cli.py --prepare`
 5. To upload the dataset to the GCS bucket:<br />
    `python cli.py --upload`
@@ -205,14 +205,19 @@ The container generates the 500 question & answer pairs dataset (Strict Format D
 
 **Gemini Finetuner Container**
 
-The container use the Strict Format Dataset from the GCS bucket, which contains 500 question & answer pairs, to fine-tune a Gemini 1.5 flash 002 model. 
+The container use the `Strict Format Dataset` from the GCS bucket, which contains 500 question & answer pairs, to fine-tune a Gemini 1.5 flash 002 model. 
 
-- To finetune the model - `python cli.py --train`
-- To chat with the finetuned model - `python cli.py --chat`
-- To delete finetuned model - `python cli.py --delete_model`
-- To delete the tuning job - `python cli.py --delete_hyperparameter_tuning_job`
+1. To finetune the model:<br />
+   `python cli.py --train`
+2. Find the `project ID` and model `endpoint ID` and replace them in the `MODEL_ENDPOINT` variable in the `chat()` function.
+3. To chat with the finetuned model:<br />
+   `python cli.py --chat`
+4. To delete the finetuned model (optional), you need to find the `model address` in GCP Vertex AI and replace it with the `model_name` argument in `delete_model()`:<br />
+   `python cli.py --delete_model`
+5. To delete the tuning job (optional), you need to find the `tuning job ID` in GCP Vertex AI and replace both the `project` and `hyperparameter_tuning_job` arguments in delete_model():<br />
+   `python cli.py --delete_hyperparameter_tuning_job`
 
-Specifically, the configuration we use for finetuning is: `epochs=6` `adapter_size=4` `learning_rate_multiplier=1.0`
+Specifically, the configuration we use for finetuning is: `epochs=6` `adapter_size=4` `learning_rate_multiplier=1.0`. 
 
 **RAG & Chromedb Containers**
 
