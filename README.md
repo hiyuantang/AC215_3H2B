@@ -124,7 +124,7 @@ xxxxxxxxxxxx
 ## Containers ##
 
 We offer two options for building and running containers for Milestone 2:
-- Build and run all containers at once. (recommended)
+- Build and run all containers at once. __(recommended)__
 - Build and run a single container or a set of containers that perform a single function.
 
 To get started, you need to modify two files under the `./src` directory: `.env` and `env.dev`
