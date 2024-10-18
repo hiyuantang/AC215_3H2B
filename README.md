@@ -105,15 +105,15 @@ We generated a dataset of 500 pairs of question and answer pairs for fine-tuning
 The goal for fine-tuning the LLM on this dataset is to make the model respond by following a strict format of a travel itinerary. The format is as follows:
 
 ```
-A sentence summarizing the travel<br />
-Day 1: Theme 1<br />
--Location 1.1<br />
--Location 1.2<br />
--Location 1.*<br />
-Day 2: Theme 2<br />
--Location 2.1<br />
--Location 2.2<br />
--Location 2.*<br />
+A sentence summarizing the travel
+Day 1: Theme 1
+-Location 1.1
+-Location 1.2
+-Location 1.*
+Day 2: Theme 2
+-Location 2.1
+-Location 2.2
+-Location 2.*
 ...
 ```
 
