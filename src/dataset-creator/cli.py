@@ -124,6 +124,8 @@ Sample JSON Output:
 
 Note: The sample JSON provided includes only three Q&A pairs for brevity. The actual output should contain all 20 pairs as requested."""
 
+INPUT_PROMPT = """Generate 20 diverse, informative, and engaging question-answer pairs about extremely concise travel itinary following these guidelines. Ensure each pair is independent and self-contained. """
+NUM_ITERATIONS = 1 # Loop to generate and save the content
 
 def generate():
     print("generate()")
@@ -140,8 +142,6 @@ def generate():
         system_instruction=[SYSTEM_INSTRUCTION]
     )
 
-    INPUT_PROMPT = """Generate 20 diverse, informative, and engaging question-answer pairs about extremely concise travel itinary following these guidelines. Ensure each pair is independent and self-contained. """
-    NUM_ITERATIONS = 1 # Loop to generate and save the content
     for i in range(0, NUM_ITERATIONS):
         print(f"Generating batch: {i}")
         try:
@@ -161,6 +161,28 @@ def generate():
         except Exception as e:
           print(f"Error occurred while generating content: {e}")
 
+def save_prompt():
+    # Create a DataFrame
+    data = {
+        'SYSTEM_INSTRUCTION': [SYSTEM_INSTRUCTION],
+        'INPUT_PROMPT': [INPUT_PROMPT],
+        'NUM_ITERATIONS': [NUM_ITERATIONS]
+    }
+    df = pd.DataFrame(data)
+
+    # Define the filename
+    filename = os.path.join(OUTPUT_FOLDER, "sys-instruct.csv")
+
+    # Write the DataFrame to a CSV file
+    df.to_csv(filename, index=False)
+
+    # # Read the DataFrame
+    # df_read = pd.read_csv(filename)
+    # for index, row in df_read.iterrows():
+    #     print("System Instruction:", row['SYSTEM_INSTRUCTION'])
+    #     print("Input Prompt:", row['INPUT_PROMPT'])
+    #     print("Number of Iterations:", row['NUM_ITERATIONS'])
+    #     print("\n" + "-"*40 + "\n")
 
 def prepare():
     print("prepare()")
@@ -245,6 +267,9 @@ def main(args=None):
 
     if args.generate:
         generate()
+    
+    if args.save_prompt:
+        save_prompt()
 
     if args.prepare:
         prepare()
@@ -267,6 +292,11 @@ if __name__ == "__main__":
         "--prepare",
         action="store_true",
         help="Prepare data",
+    )
+    parser.add_argument(
+        "--save_prompt",
+        action="store_true",
+        help="Save the system instruction, the prompt, and the number of iterations",
     )
     parser.add_argument(
         "--upload",
