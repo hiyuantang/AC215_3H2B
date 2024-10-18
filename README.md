@@ -164,7 +164,7 @@ Make sure to replace `<container_name>` with the actual name of the container yo
 `data-versioning`<br />
 `dataset-creator`<br />
 `gemini-finetuner`<br />
-`llm-rag`
+`llm-rag-cli`
 
 ## Option2: Build & Run a Single Container or a Set of Containers Performing a Single Function ##
 
