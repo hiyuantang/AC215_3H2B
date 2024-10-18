@@ -182,7 +182,7 @@ The container is responsible for versioning the Strict Format Dataset. It will c
    `git commit -m <message>`<br />
    `dvc push -r llm_strict_format_dataset`
 
-Make sure to replace <message> with the actual git commit message.
+Make sure to replace `<message>` with the actual git commit message.
 
 **Data Creator Container**
 
@@ -214,7 +214,7 @@ The container use the `Strict Format Dataset` from the GCS bucket, which contain
    `python cli.py --chat`
 4. To delete the finetuned model (optional), you need to find the `model address` in GCP Vertex AI and replace it with the `model_name` argument in `delete_model()`:<br />
    `python cli.py --delete_model`
-5. To delete the tuning job (optional), you need to find the `tuning job ID` in GCP Vertex AI and replace both the `project` and `hyperparameter_tuning_job` arguments in delete_model():<br />
+5. To delete the tuning job (optional), you need to find the `tuning job ID` in GCP Vertex AI and replace both the `project` and `hyperparameter_tuning_job` arguments in `delete_hyperparameter_tuning_job()`:<br />
    `python cli.py --delete_hyperparameter_tuning_job`
 
 Specifically, the configuration we use for finetuning is: `epochs=6` `adapter_size=4` `learning_rate_multiplier=1.0`. 
