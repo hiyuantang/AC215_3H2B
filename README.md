@@ -205,7 +205,7 @@ The container generates the 500 question & answer pairs dataset, `Strict Format 
 
 **Gemini Finetuner Container**
 
-The container use the `Strict Format Dataset` from the GCS bucket, which contains 500 question & answer pairs, to fine-tune a Gemini 1.5 flash 002 model. 
+The container use the `Strict Format Dataset` from the GCS bucket, which contains 500 question & answer pairs, to fine-tune a `Gemini 1.5 flash 002` model. 
 
 1. To finetune the model:<br />
    `python cli.py --train`
@@ -219,9 +219,33 @@ The container use the `Strict Format Dataset` from the GCS bucket, which contain
 
 Specifically, the configuration we use for finetuning is: `epochs=6` `adapter_size=4` `learning_rate_multiplier=1.0`. 
 
-**RAG & Chromedb Containers**
+**RAG & Chromadb Containers**
 
-xxxxxxx
+The container applies RAG (Retrieval Augmented Generation) to a `Gemini 1.5 flash 002` model to enhance its base knowledge regarding the travel destination city.
+- In the `src/llm-rag/input-datasets/cities-wiki` directory, we have 50 cities' Wikipedia pages scraped online.
+- `cli.py` in the container will feature functions such as chunking, embedding, chat, agent, etc.
+- The RAG container depends on the ChromaDB container to host the chunked and embedded knowledge base.
+
+1. To chunk the database:<br />
+   `python cli.py --chunk --chunk_type char-split`<br />
+   This will read each `.txt` file in the `input-datasets/cities-wiki` directory, split the text into chunks, and save the chunks as `JSONL` files in the `outputs` directory.
+2. To generate embeddings for the text chunks:<br />
+   `python cli.py --embed --chunk_type char-split`<br />
+   We use the `text-embedding-004` model to generate the embeddings.
+3. Load the chunks and embeddings into ChromaDB:<br />
+   `python cli.py --load --chunk_type char-split`<br />
+   You can use [ChromaDB](https://ac215-llm-rag.dlops.io/chromaui) to view this Vector Database.
+4. Test querying the vector database:<br />
+   `python cli.py --query --chunk_type char-split`<br />
+   This will generate embeddings for the query, compare, search, and print out the top similar chunks from ChromaDB.
+5. Chat with the LLM using the RAG system:<br />
+   `python cli.py --chat --chunk_type char-split`<br />
+   This will perform step 4, and in addition to that, it will send both the query and relevant chunks to the LLM, and print out the LLM response.
+6. Travel Expert Agent:<br />
+   `python cli.py --agent --chunk_type char-split`<br />
+   This will take the user's question and pass it to the LLM to determine the user's intent, perform function calling to get all the responses required to answer the question, pass the query and context to the LLM, and display the LLM's response.
+
+Note: The `--chunk_type` is not limited to `char-split`; we can also use `recursive-split` or `semantic-split`.
 
 **Route Optimizer Container**
 
