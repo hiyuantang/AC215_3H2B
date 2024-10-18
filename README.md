@@ -104,7 +104,7 @@ The container is responsible for versioning both the Strict Format Dataset and t
 
 - To initialize DVC, we use the command: `dvc init`. Since our repository already has DVC initialized and contains a `.dvc` directory at the root, we do not need to perform this step again
 - To add remotes, we use the following commands: `dvc remote add llm_strict_format_dataset gs://llm-strict-format-dataset/dvc_store` for Strict Format Dataset
-- To version the datasets, we follow these steps: `dvc add src/dataset-creator/data/*.jsonl` `dvc add src/dataset-creator/data/*.csv` `git add .` `git commit -m [message]` `dvc push -r strict_format_dataset`
+- To version the datasets, we follow these steps: `dvc add src/dataset-creator/data/*.jsonl` `dvc add src/dataset-creator/data/*.csv` `git add .` `git commit -m [message]` `dvc push -r llm_strict_format_dataset`
 
 **Data Creator Container**
 
