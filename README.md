@@ -25,20 +25,6 @@
     │   ├── cli.py
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
-    ├── frontend
-    │   ├── src/app
-    │   │   ├── *
-    │   ├── .dockerignore
-    │   ├── .eslintrc.json
-    │   ├── .gitignore
-    │   ├── Dockerfile
-    │   ├── next.config.mjs
-    │   ├── package-lock.json
-    │   ├── pacakge.json
-    │   ├── postcss.config.mjs
-    │   ├── README.md
-    │   ├── tailwind.config.ts
-    │   ├── tsconfig.json
     ├── gemini-finetuner
     │   ├── Dockerfile
     │   ├── Pipfile
@@ -63,6 +49,20 @@
     │   ├── Dockerfile
     │   ├── requirements.txt
     │   ├── cli.py
+    ├── frontend
+    │   ├── src/app
+    │   │   ├── *
+    │   ├── .dockerignore
+    │   ├── .eslintrc.json
+    │   ├── .gitignore
+    │   ├── Dockerfile
+    │   ├── next.config.mjs
+    │   ├── package-lock.json
+    │   ├── pacakge.json
+    │   ├── postcss.config.mjs
+    │   ├── README.md
+    │   ├── tailwind.config.ts
+    │   ├── tsconfig.json
     ├── .env
     ├── docker-compose.yml
     ├── docker-shell.sh
@@ -165,7 +165,12 @@ Make sure to replace `<container_name>` with the actual name of the container yo
 
 ## Option2: Build & Run a Single Container or a Set of Containers Performing a Single Function ##
 
-xxxxxxxxxxx Coming soon. 
+1. Navigate to either data-versioning, dataset-creator, gemini-finetuner, or llm-rag directory: 
+   For example: `cd ./src/data-versioning`
+2. Make sure you have the perssion to run the file:
+   `chmod +x *.sh`
+3. To build the docker image and run the container:
+   `./docker-shell.sh`
 
 **Data Versioning Container**
 
@@ -262,15 +267,6 @@ This frontend allows users to input trip details, including destination city, ty
 
 - To select travel preferences and submit the form, users can interact with dropdowns and date pickers in the UI.
 - The map visualizes the generated trip itinerary, showing location routes and travel recommendations.
-
-## Running Dockerfile
-Instructions for running the individual Dockerfile. 
-- `cd` into the directory such as `data-versioning`, `dataset-creator`, `gemini-finetuner`, or `rag`
-- Make sure you have the perssion to run the file. You may - `chmod +x *.sh`
-- To run Dockerfile - `./docker-shell.sh`
-
-Instructions for running all the Dockerfile at once. 
-- xxxxxxxxxx
 
 **Models container**
 - This container has scripts for model training, rag pipeline and inference
