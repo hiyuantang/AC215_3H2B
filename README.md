@@ -94,13 +94,17 @@ In this milestone, we have the components for data versioning, data creation, LL
 
 We generated a dataset of 500 pairs of question and answer pairs for fine-tuning the Gemini 1.5 flash model to behave in a way that facilitates us extracting days, themes, and location information. Specifically, the days and location information will go through a native route optimization to reduce the total distance for each day of the trip. With that in mind, the question and answer pair is formated in a way that the question will ask for a concise thematic travel itinerary and the answer will provide the itinerary in a strict format. For example:
 
+```
 - **Example Pair 1:**
 	- Question: My family and I are going to Rome for 5 days in April, eager to immerse ourselves in ancient history and iconic landmarks. Can you create a concise itinerary with only days and locations, focusing on the historical significance of this city?
 	- Answer: 5-Day Family Rome Itinerary for April\nDay 1: Ancient Wonders & Colosseum Majesty\n- Roman Forum\n- Colosseum\n- Palatine Hill\nDay 2: Vatican City & Artistic Treasures\n- Vatican Museums\n- Sistine Chapel\n- St. Peter's Basilica\nDay 3: Trastevere Charm & Local Flavors\n- Trastevere Neighborhood\n- Campo de' Fiori\n- Pantheon\nDay 4: Ancient Baths & Secret Gardens\n- Baths of Caracalla\n- Borghese Gallery & Gardens\n- Trevi Fountain\nDay 5: Historical Delights & Roman Views\n- Spanish Steps\n- Piazza Navona\n- Castel Sant'Angelo
+```
 
+```
 - **Example Pair 2:** 
 	- Question: Location: Bangkok, Days: 4, month: January, type: Culinary. What is a concise itinerary for my trip?
 	- Answer: 5-Day Culinary Itinerary in Bangkok for January\nDay 1: Street Food Delights and Market Explorations\n- Chatuchak Weekend Market\n- Yaowarat (Chinatown)\n- Sukhumvit Street Food\nDay 2: Authentic Thai Cuisine and Fine Dining\n- Nahm\n- Bo.lan\n- Gaggan Anand\nDay 3: Riverfront Dining and Night Market Delights\n- Asiatique The Riverfront\n- Ratchada Night Market\n- Khao San Road\nDay 4: Traditional Thai Dishes and Culinary Workshops\n- Thipsamai Pad Thai\n- Somboon Seafood\n- Blue Elephant Cooking School
+```
 
 The goal for fine-tuning the LLM on this dataset is to make the model respond by following a strict format of a travel itinerary. The format is as follows:
 
@@ -136,7 +140,7 @@ To get started, you need to modify two files under the `./src` directory: `.env`
 
 Additionally, ensure you have your GCP key placed in the `./secrets` directory and rename it to `llm-service-account-key.json`.
 
-## Option1: Build & Run All Containers At Once ##
+## Option1: Build & Run All Containers At Once (Recommended) ##
 
 Steps are as follows:<br />
 1. Navigate to the `./src` directory:<br />
@@ -151,7 +155,12 @@ Steps are as follows:<br />
 5. Open a new terminal. Now, you can attach to any container:<br />
 `docker attach <container_name>`
 
-Make sure to replace `<container_name>` with the actual name of the container you wish to attach to.
+Make sure to replace `<container_name>` with the actual name of the container you wish to attach to. You will have following container names to choose from:
+
+`data-versioning`<br />
+`dataset-creator`<br />
+`gemini-finetuner`<br />
+`llm-rag`
 
 ## Option2: Build & Run a Single Container or a Set of Containers Performing a Single Function ##
 
@@ -159,9 +168,18 @@ Make sure to replace `<container_name>` with the actual name of the container yo
 
 The container is responsible for versioning both the Strict Format Dataset and the City Dataset. It will containerize and bind mount the entire Git repository. This approach is chosen because DVC (Data Version Control) works best with Git, which typically requires the inclusion of the `.git` directory in the container or bind-mounted for DVC to function properly. We set up two remotes for DVC, each responsible for tracking one of the datasets mentioned above.
 
-- To initialize DVC, we use the command: `dvc init`. Since our repository already has DVC initialized and contains a `.dvc` directory at the root, we do not need to perform this step again
-- To add remotes, we use the following commands: `dvc remote add llm_strict_format_dataset gs://llm-strict-format-dataset/dvc_store` for Strict Format Dataset
-- To version the datasets, we follow these steps: `dvc add src/dataset-creator/data/*.jsonl` `dvc add src/dataset-creator/data/*.csv` `git add .` `git commit -m [message]` `dvc push -r llm_strict_format_dataset`
+1. To initialize DVC: (Since our repository already has DVC initialized and contains a `.dvc` directory at the root, we do not need to perform this step again)<br />
+  `dvc init`
+2. Create a GCS bucket named `llm-strict-format-dataset`
+3. In the GCS bucket, create a folder named `dvc_store`
+4. To add remotes:<br />
+   `dvc remote add llm_strict_format_dataset gs://llm-strict-format-dataset/dvc_store` for Strict Format Dataset
+5. To version the datasets:<br />
+   `dvc add src/dataset-creator/data/*.jsonl`<br />
+   `dvc add src/dataset-creator/data/*.csv`<br />
+   `git add .`<br />
+   `git commit -m <message>`<br />
+   `dvc push -r llm_strict_format_dataset`<br />
 
 **Data Creator Container**
 
