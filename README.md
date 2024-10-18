@@ -165,11 +165,11 @@ Make sure to replace `<container_name>` with the actual name of the container yo
 
 ## Option2: Build & Run a Single Container or a Set of Containers Performing a Single Function ##
 
-1. Navigate to either data-versioning, dataset-creator, gemini-finetuner, or llm-rag directory: 
+1. Navigate to either `data-versioning`, `dataset-creator`, `gemini-finetuner`, or `llm-rag` directory:<br />
    For example: `cd ./src/data-versioning`
-2. Make sure you have the perssion to run the file:
+2. Make sure you have the perssion to run the file:<br />
    `chmod +x *.sh`
-3. To build the docker image and run the container:
+3. To build the docker image and run the container:<br />
    `./docker-shell.sh`
 
 **Data Versioning Container**
@@ -254,6 +254,8 @@ The container applies RAG (Retrieval Augmented Generation) to a `Gemini 1.5 flas
 
 Note: The `--chunk_type` is not limited to `char-split`; we can also use `recursive-split` or `semantic-split`.
 
+## Extra Works ##
+
 **Route Optimizer Container**
 
 The container accepts a list of location names, retrieves their coordinates using the Geopy API, and calculates the optimal route between them using a greedy nearest-neighbor algorithm. The first location is randomly selected and the remaining locations are ordered by the shortest distance from the previous stop.
@@ -267,10 +269,6 @@ This frontend allows users to input trip details, including destination city, ty
 
 - To select travel preferences and submit the form, users can interact with dropdowns and date pickers in the UI.
 - The map visualizes the generated trip itinerary, showing location routes and travel recommendations.
-
-**Models container**
-- This container has scripts for model training, rag pipeline and inference
-- Instructions for running the model container - `Instructions here`
 
 **Notebooks/Reports**
 This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
