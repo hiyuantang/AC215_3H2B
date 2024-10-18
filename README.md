@@ -240,7 +240,7 @@ The container applies RAG (Retrieval Augmented Generation) to a `Gemini 1.5 flas
    This will generate embeddings for the query, compare, search, and print out the top similar chunks from ChromaDB.
 5. Chat with the LLM using the RAG system:<br />
    `python cli.py --chat --chunk_type char-split`<br />
-   This will perform step 4, and in addition to that, it will send both the query and relevant chunks to the LLM, and print out the LLM response.
+   This will perform step 4, and in addition to that, it will send both the query and relevant chunks to the LLM, and print out the LLM response. You can use [Chat](https://ac215-llm-rag.dlops.io/chat) to test out LLM with the RAG system. 
 6. Travel Expert Agent:<br />
    `python cli.py --agent --chunk_type char-split`<br />
    This will take the user's question and pass it to the LLM to determine the user's intent, perform function calling to get all the responses required to answer the question, pass the query and context to the LLM, and display the LLM's response.
