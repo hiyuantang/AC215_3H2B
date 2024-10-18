@@ -134,7 +134,7 @@ To get started, you need to modify two files under the `./src` directory: `.env`
 
 Additionally, ensure you have your GCP key placed in the `./secrets` directory and rename it to `llm-service-account-key.json`.
 
-## Option1:  Build & Run All Containers At Once ##
+## Option1: Build & Run All Containers At Once ##
 
 Steps are as follows:<br />
 1. Navigate to the `./src` directory:<br />
@@ -150,6 +150,8 @@ Steps are as follows:<br />
 `docker attach <container_name>`
 
 Make sure to replace `<container_name>` with the actual name of the container you wish to attach to.
+
+## Option2: Build & Run a Single Container or a Set of Containers Performing a Single Function##
 
 **Data Versioning Container**
 
@@ -178,6 +180,10 @@ The container use the Strict Format Dataset from the GCS bucket, which contains 
 - To delete the tuning job - `python cli.py --delete_hyperparameter_tuning_job`
 
 Specifically, the configuration we use for finetuning is: `epochs=6` `adapter_size=4` `learning_rate_multiplier=1.0`
+
+**RAG & Chromedb Containers**
+
+xxxxxxx
 
 **Route Optimizer Container**
 
