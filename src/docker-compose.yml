@@ -6,9 +6,13 @@ services:
     llm-rag-cli:
         image: llm-rag-cli
         container_name: llm-rag-cli
+        stdin_open: true
+        tty: true
+        env_file:
+            - ./env.dev
         volumes:
             - ../secrets:/secrets
-            - llm-rag:/app
+            - ./llm-rag:/app
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
             GCP_PROJECT: $GCP_PROJECT
@@ -21,7 +25,7 @@ services:
         ports:
             - 8000:8000
         volumes:
-            - ./docker-volumes/chromadb:/chroma/chroma
+            - ./llm-rag/docker-volumes/chromadb:/chroma/chroma
         environment:
             - IS_PERSISTENT=TRUE
             - ANONYMIZED_TELEMETRY=FALSE
@@ -29,9 +33,13 @@ services:
     gemini-finetuner:
         image: gemini-finetuner
         container_name: gemini-finetuner
+        stdin_open: true
+        tty: true
+        env_file:
+            - ./env.dev
         volumes:
             - ../secrets:/secrets
-            - gemini-finetuner:/app
+            - ./gemini-finetuner:/app
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
             GCP_PROJECT: $GCP_PROJECT
@@ -40,9 +48,13 @@ services:
     data-versioning:
         image: data-versioning
         container_name: data-versioning
+        stdin_open: true
+        tty: true
+        env_file:
+            - ./env.dev
         volumes:
             - ../secrets:/secrets
-            - $REPO_DIR:/app
+            - ../:/app
             - ~/.gitconfig:/etc/gitconfig
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
@@ -58,9 +70,13 @@ services:
     dataset-creator:
         image: dataset-creator
         container_name: dataset-creator
+        stdin_open: true
+        tty: true
+        env_file:
+            - ./env.dev
         volumes:
             - ../secrets:/secrets
-            - dataset-creator:/app
+            - ./dataset-creator:/app
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
             GCP_PROJECT: $GCP_PROJECT

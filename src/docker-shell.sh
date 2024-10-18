@@ -4,7 +4,7 @@
 set -e
 
 # Read the settings file
-source ./env.dev
+source env.dev
 
 # Set vairables
 export PERSISTENT_DIR=$(pwd)/../persistent-folder/
@@ -33,4 +33,4 @@ for i in "${!directories[@]}"; do
 done
 
 # Run All Containers
-docker-compose up --build
+# docker-compose up
