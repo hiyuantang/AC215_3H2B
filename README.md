@@ -8,6 +8,7 @@
 ├── references
 ├── reports
 │   └── Statement of Work_Sample.pdf
+├── secrets
 └── src
     ├── data-versioning
     │   ├── Dockerfile
@@ -24,17 +25,6 @@
     │   ├── cli.py
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
-    ├── gemini-finetuner
-    │   ├── Dockerfile
-    │   ├── Pipfile
-    │   ├── Pipfile.lock
-    │   ├── cli.py
-    │   ├── docker-entrypoint.sh
-    │   ├── docker-shell.sh
-    ├── route-optimization
-    │   ├── Dockerfile
-    │   ├── requirements.txt
-    │   ├── cli.py
     ├── frontend
     │   ├── src/app
     │   │   ├── *
@@ -49,14 +39,34 @@
     │   ├── README.md
     │   ├── tailwind.config.ts
     │   ├── tsconfig.json
-    ├── rag
+    ├── gemini-finetuner
     │   ├── Dockerfile
     │   ├── Pipfile
     │   ├── Pipfile.lock
     │   ├── cli.py
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
+    ├── llm-rag
+    │   ├── input-datasets
+    │   │   ├── cities-wiki
+    │   │   │   ├── *.txt
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── agent_tools.py
+    │   ├── cli.py
+    │   ├── docker-compose.yml
+    │   ├── docker-entrypoint.sh
+    │   ├── docker-shell.sh
+    │   ├── semantic_splitter.py
+    ├── route-optimization
+    │   ├── Dockerfile
+    │   ├── requirements.txt
+    │   ├── cli.py
+    ├── .env
     ├── docker-compose.yml
+    ├── docker-shell.sh
+    ├── env.dev
 
 ```
 
