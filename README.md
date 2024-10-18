@@ -137,16 +137,16 @@ Additionally, ensure you have your GCP key placed in the `./secrets` directory a
 ## Option1:  Build & Run All Containers At Once ##
 
 Steps are as follows:<br />
-Navigate to the `./src` directory:<br />
-`cd src<br />`
-Build all container images:<br />
+1. Navigate to the `./src` directory:<br />
+`cd src<br />`<br />
+2. Build all container images:<br />
 `chmod +x ./*.sh`<br />
 `./docker-shell.sh`<br />
-Run all containers:<br />
+3. Run all containers:<br />
 `docker-compose up`<br />
-View the running containers:<br />
+4. View the running containers:<br />
 `docker ps` or `docker ps --all`<br />
-Open a new terminal. Now, you can attach to any container:<br />
+5. Open a new terminal. Now, you can attach to any container:<br />
 `docker attach <container_name>`
 
 Make sure to replace `<container_name>` with the actual name of the container you wish to attach to.
