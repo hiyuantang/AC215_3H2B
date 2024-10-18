@@ -150,9 +150,9 @@ Steps are as follows:<br />
 `./docker-shell.sh`<br />
 3. Run all containers:<br />
 `docker-compose up`<br />
-4. View the running containers:<br />
+4. Open a new terminal. View the running containers:<br />
 `docker ps` or `docker ps --all`<br />
-5. Open a new terminal. Now, you can attach to any container:<br />
+5. Now, you can attach to any container:<br />
 `docker attach <container_name>`
 
 Make sure to replace `<container_name>` with the actual name of the container you wish to attach to. You will have following container names to choose from:
