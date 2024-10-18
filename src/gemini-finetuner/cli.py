@@ -59,11 +59,11 @@ def train(wait_for_job=False):
 
 def chat():
     print("chat()")
-    MODEL_ENDPOINT = "projects/184619367894/locations/us-central1/endpoints/8964855962443710464" # Finetuned model
+    MODEL_ENDPOINT = "projects/184619367894/locations/us-central1/endpoints/2678393832587919360" # Finetuned model
     
     generative_model = GenerativeModel(MODEL_ENDPOINT)
 
-    query = '''Location:  New Orleans, Days: 4, month: April, type: Boring. How can I craft a concise itinerary with only days and locations that makes me feel bored in New Orleans in April?'''
+    query = '''Location: Bangkok, Days: 5, month: January, type: Culinary. What is a concise itinerary for my trip?'''
     
     print("query: ",query)
     response = generative_model.generate_content(
