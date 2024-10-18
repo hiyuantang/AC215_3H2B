@@ -137,7 +137,6 @@ To get started, you need to modify two files under the `./src` directory: `.env`
 - `.env` is responsible for providing environmental variables to `docker-compose.yml`
 - `env.dev` will be read by `docker-shell.sh`
 - Make sure you have updated items such as `GCP_PROJECT`, `GCS_BUCKET_NAME`, `GCP_SERVICE_ACCOUNT`, etc., according to your GCP setup.
-- For `GCS_BUCKET_NAME`, we recommended keep using the name `llm-strict-format-dataset`.
 
 Additionally, ensure you have your GCP key placed in the `./secrets` directory and rename it to `llm-service-account-key.json`.
 
@@ -178,10 +177,10 @@ The container is responsible for versioning the Strict Format Dataset. It will c
 
 1. To initialize DVC (Since our repository already has DVC initialized and contains a `.dvc` directory at the root, we do not need to perform this step again):<br />
   `dvc init`
-2. Create a GCS bucket named `llm-strict-format-dataset`
+2. Create a GCS bucket
 3. In the GCS bucket, create a folder named `dvc_store`
 4. To add remotes:<br />
-   `dvc remote add llm_strict_format_dataset gs://llm-strict-format-dataset/dvc_store` for Strict Format Dataset
+   `dvc remote add llm_strict_format_dataset gs://<your_gcs_bucket_name>/dvc_store` for Strict Format Dataset
 5. To version the datasets (This step is usually done after you create a new version of dataset using `dataset-creator` container):<br />
    `dvc add src/dataset-creator/data/*.jsonl`<br />
    `dvc add src/dataset-creator/data/*.csv`<br />
