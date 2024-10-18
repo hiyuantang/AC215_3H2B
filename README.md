@@ -46,19 +46,23 @@
     │   ├── docker-shell.sh
     │   ├── semantic_splitter.py
     ├── route-optimization
-    │   ├── Dockerfile
-    │   ├── requirements.txt
     │   ├── cli.py
+    │   ├── docker-entrypoint.sh
+    │   ├── docker-shell.sh
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
     ├── frontend
     │   ├── src/app
     │   │   ├── *
     │   ├── .dockerignore
     │   ├── .eslintrc.json
     │   ├── .gitignore
+    │   ├── docker-shell.sh
     │   ├── Dockerfile
     │   ├── next.config.mjs
     │   ├── package-lock.json
-    │   ├── pacakge.json
+    │   ├── package.json
     │   ├── postcss.config.mjs
     │   ├── README.md
     │   ├── tailwind.config.ts
@@ -74,7 +78,7 @@
 
 **Team Members**
 
-Yuan Tang
+Yuan Tang, Brian Sutioso
 
 **Group Name**
 
@@ -166,7 +170,7 @@ Make sure to replace `<container_name>` with the actual name of the container yo
 
 1. Navigate to either `data-versioning`, `dataset-creator`, `gemini-finetuner`, or `llm-rag` directory:<br />
    For example: `cd ./src/data-versioning`
-2. Make sure you have the perssion to run the file:<br />
+2. Make sure you have the permission to run the file:
    `chmod +x *.sh`
 3. To build the docker image and run the container:<br />
    `./docker-shell.sh`
