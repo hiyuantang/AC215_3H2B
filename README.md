@@ -138,7 +138,7 @@ Additionally, ensure you have your GCP key placed in the `./secrets` directory a
 
 Steps are as follows:<br />
 1. Navigate to the `./src` directory:<br />
-`cd src<br />`<br />
+`cd src`<br />
 2. Build all container images:<br />
 `chmod +x ./*.sh`<br />
 `./docker-shell.sh`<br />
