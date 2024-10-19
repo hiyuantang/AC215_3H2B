@@ -7,7 +7,9 @@
 │   └── CityWikiScraper.ipynb.ipynb
 ├── references
 ├── reports
-│   └── Statement of Work_Sample.pdf
+│   ├── Application Mockup Design.pdf
+│   ├── Experiments.pdf
+│   └── Statement of Work.pdf
 ├── secrets
 └── src
     ├── data-versioning
