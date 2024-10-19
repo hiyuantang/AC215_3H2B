@@ -259,7 +259,7 @@ def embed(method="char-split"):
 
 		chunks = data_df["chunk"].values
 		if method == "semantic-split":
-			embeddings = generate_text_embeddings(chunks,EMBEDDING_DIMENSION, batch_size=15)
+			embeddings = generate_text_embeddings(chunks,EMBEDDING_DIMENSION, batch_size=10)
 		else:
 			embeddings = generate_text_embeddings(chunks,EMBEDDING_DIMENSION, batch_size=100)
 		data_df["embedding"] = embeddings
@@ -376,7 +376,7 @@ def chat(method="char-split"):
 	hitory, culture, etc. For the main body of the answer, give me a more detailed traval itinerary without 
 	changing my plan, meaning no change of days and the locations in the original plan. At the end of the 
 	itinerary, give user tips specifically for this travel, considering about the month and its respective 
-	season. '''
+	season.'''
 	query_embedding = generate_query_embedding(query)
 	print("Query:", query)
 	print("Embedding values:", query_embedding)
