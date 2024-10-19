@@ -281,10 +281,15 @@ This frontend allows users to input trip details, including destination city, ty
 - To select travel preferences and submit the form, users can interact with dropdowns and date pickers in the UI.
 - The map visualizes the generated trip itinerary, showing location routes and travel recommendations.
 
+----
+
 **Notebooks/Reports**
-This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
+
+This folder contains code and pdf that is not part of container 
+
+- `CityWikiScraper.ipynb`: This Python notebook helps scrape city data from Wikipedia.
+- `Application Mockup Design.pdf`: Contains the visualizations of UI and wireframes.
+- `Experiments.pdf`: Visualizes and explains the experiments we ran for RAG, fine-tuning, running instances, DVC, etc.
+- `Statement of Work.pdf`: Contains the updated statement of work.
 
 ----
-You may adjust this template as appropriate for your project.
-
-**Application Mockup Design**
