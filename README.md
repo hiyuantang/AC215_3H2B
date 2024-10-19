@@ -80,7 +80,7 @@
 
 **Team Members**
 
-Yuan Tang, Brian Sutioso
+Yuan Tang, Brian Sutioso, Jiho Kil
 
 **Group Name**
 
