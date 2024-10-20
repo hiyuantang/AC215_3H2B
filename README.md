@@ -17,27 +17,27 @@
     │   ├── Pipfile
     │   ├── Pipfile.lock
     │   ├── docker-entrypoint.sh
-    │   ├── docker-shell.sh
+    │   └── docker-shell.sh
     ├── dataset-creator
     │   ├── data
-    │   │   ├── *.dvc
+    │   │   └── *.dvc
     │   ├── Dockerfile
     │   ├── Pipfile
     │   ├── Pipfile.lock
     │   ├── cli.py
     │   ├── docker-entrypoint.sh
-    │   ├── docker-shell.sh
+    │   └── docker-shell.sh
     ├── gemini-finetuner
     │   ├── Dockerfile
     │   ├── Pipfile
     │   ├── Pipfile.lock
     │   ├── cli.py
     │   ├── docker-entrypoint.sh
-    │   ├── docker-shell.sh
+    │   └── docker-shell.sh
     ├── llm-rag
     │   ├── input-datasets
-    │   │   ├── cities-wiki
-    │   │   │   ├── *.txt
+    │   │   └── cities-wiki
+    │   │       └── *.txt
     │   ├── Dockerfile
     │   ├── Pipfile
     │   ├── Pipfile.lock
@@ -46,17 +46,17 @@
     │   ├── docker-compose.yml
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
-    │   ├── semantic_splitter.py
+    │   └── semantic_splitter.py
     ├── route-optimization
     │   ├── cli.py
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
     │   ├── Dockerfile
     │   ├── Pipfile
-    │   ├── Pipfile.lock
+    │   └── Pipfile.lock
     ├── frontend
     │   ├── src/app
-    │   │   ├── *
+    │   │   └── *
     │   ├── .dockerignore
     │   ├── .eslintrc.json
     │   ├── .gitignore
@@ -68,11 +68,11 @@
     │   ├── postcss.config.mjs
     │   ├── README.md
     │   ├── tailwind.config.ts
-    │   ├── tsconfig.json
+    │   └── tsconfig.json
     ├── .env
     ├── docker-compose.yml
     ├── docker-shell.sh
-    ├── env.dev
+    └── env.dev
 
 ```
 
