@@ -59,11 +59,15 @@ def train(wait_for_job=False):
 
 def chat():
     print("chat()")
-    MODEL_ENDPOINT = "projects/184619367894/locations/us-central1/endpoints/2678393832587919360" # Finetuned model
+    MODEL_ENDPOINT = "projects/184619367894/locations/us-central1/endpoints/6989534944632504320" # Finetuned model
+    # MODEL_ENDPOINT = "gemini-1.5-flash-002"
     
     generative_model = GenerativeModel(MODEL_ENDPOINT)
 
-    query = '''Location: Bangkok, Days: 5, month: January, type: Culinary. What is a concise itinerary for my trip?'''
+    query = '''Location: Shanghai, Days: 4, Month: December, Type: Solo. This is the first stage of creating an itinerary. 
+    As a professional travel planner, can you create a concise itinerary using the TDLN format? TDLN includes only the theme, 
+    days, and location names, each on a new line. The format requires that no '()' be used to explain the location, and no additional 
+    information should be provided unless specified in the prompt.'''
     
     print("query: ",query)
     response = generative_model.generate_content(
