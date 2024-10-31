@@ -56,10 +56,7 @@ SYSTEM_INSTRUCTION = """Generate a set of 20 question-answer pairs about travel 
     - Each question travel type item could be as creative as possible
 
 2. Question Types:
-    - Include a variety of question types (e.g., "what", "how", "can you", "how can I", "what about") about creating or crafting the travel itinerary given the information of city, days, month, and travel type
-    - Must ask to craft the travel itinerary that is extremely concise. 
-    - Each question's asking for a concise itinerary should match the format of answer, for example: "Can you craft a concise thematic itinerary with only days and locations? Do not mind hotels or where I live in that city."
-    - Formulate questions as if someone is passionate about travel
+    - There is only one way to ask the question: "This is the first stage of creating an itinerary. As a professional travel planner, can you create a concise itinerary using the TDLN format? TDLN includes only the theme, days, and location names, each on a new line. The format requires that no '()' be used to explain the location, and no additional information should be provided unless specified in the prompt."
     - Ensure questions cover a wide range of travel type including both positive and negative words (e.g., Introspective, Healing, Nostalgic, Spiritual, Adventure, Cultural, Solo, Family Bonding, Luxury, Ecotourism, Culinary, Educational, Retreat, Romantic, Boring, Losing Love, Losing Friends, Losing Family Members, Historic, Wellness)
 
 3. Think before answering:
@@ -71,12 +68,12 @@ SYSTEM_INSTRUCTION = """Generate a set of 20 question-answer pairs about travel 
     - Experiential Rewards: Consider what travelers gain from visiting these locations. This could be cultural enrichment, relaxation, adventure, or bonding experiences. For example, exploring Kyoto temples in fall provides a serene and visually stunning experience due to the autumn foliage.
     - Logistical Considerations: Ensure the itinerary is location rich and allows for rest and spontaneity.
     - Final Reflection: Reflection on how the planned itinerary allows travelers to immerse themselves fully in the city culture, beauty, and uniqueness. Highlight the personal growth or memories they might take away from this experience.
-
+    
 4. Answer Format:
     - Begin each answer from summarizing the prompt information about travel city, duration, month, and type. For example:
         * "3-Day Family Itinerary in Paris for December"
-        * "1-Day Solo travel plan in Beijing for April"
-        * "Boring April Itinerary in Vienna for 5 days"
+        * "1-Day Solo Itinerary in Beijing for April"
+        * "5-Day Boring Itinerary in Vienna for May"
 
 5. Final answer content:
     - The answer must strictly follow the specified format and contain only day, theme, and location information without any excessive output.
@@ -108,15 +105,15 @@ Sample JSON Output:
 ```json
 [
   {
-    "question": "Location: Paris, Days: 3, month: December, type: family. Given the information, can you craft a concise itinerary with only location and days information and structure it cleanly?",
+    "question": "Location: Paris, Days: 3, Month: December, Type: family. This is the first stage of creating an itinerary. As a professional travel planner, can you create a concise itinerary using the TDLN format? TDLN includes only the theme, days, and location names, each on a new line. The format requires that no '()' be used to explain the location, and no additional information should be provided unless specified in the prompt.",
     "answer": "3-Day Family Itinerary in Paris for December\nDay 1: Parisian Landmarks and Lights\n- Eiffel Tower\n- Seine River Cruise\n- Cathédrale Notre-Dame de Paris\n- Champs-Élysées Christmas Market\nDay 2: Artistic Odyssey Through Time\n- Louvre Museum\n- Musée d'Orsay\n- Montmartre\n- Sacré-Cœur Basilica\nDay 3: Enchanted Escapes and Hidden Gems\n- Palace of Versailles\n- Le Marais District\n- Centre Pompidou"
   },
   {
-    "question": "I would like to go to Beijing for 1 day alone. Could you craft a travel itinerary that is clean and concise with only necessary information on days and locations?",
+    "question": "Location: Beijing, Days: 1, Month: April, Type: Solo. This is the first stage of creating an itinerary. As a professional travel planner, can you create a concise itinerary using the TDLN format? TDLN includes only the theme, days, and location names, each on a new line. The format requires that no '()' be used to explain the location, and no additional information should be provided unless specified in the prompt.",
     "answer": "1-Day Solo Itinerary in Beijing for April\nDay 1: Journey Through Imperial Majesty\n- Forbidden City\n- Temple of Heaven\n- Summer Palace"
   },
   {
-    "question": "I want to travel to Barcelona for 3 days in June for a Healing journey. Could you craft a clean and concise itinerary with only days and locations? Do not mind hotels or where I live in that city.",
+    "question": "Location: Barcelona, Days: 3, Month: June, Type: Healing. This is the first stage of creating an itinerary. As a professional travel planner, can you create a concise itinerary using the TDLN format? TDLN includes only the theme, days, and location names, each on a new line. The format requires that no '()' be used to explain the location, and no additional information should be provided unless specified in the prompt.",
     "answer": "3-Day Healing Itinerary in Barcelona for June\nDay 1: Coastal Tranquility and Mindful Movement\n- Barceloneta Beach\n- Park Güell\n- Sagrada Família\nDay 2: Natural Serenity and Artistic Inspiration\n- Tibidabo Mountain\n- Parc de la Ciutadella\n- Picasso Museum\nDay 3: Historical Reflections and Inner Peace\n- Gothic Quarter\n- Barcelona Cathedral\n- Monastery of Pedralbes"
   }
 ]
@@ -125,7 +122,7 @@ Sample JSON Output:
 Note: The sample JSON provided includes only three Q&A pairs for brevity. The actual output should contain all 20 pairs as requested."""
 
 INPUT_PROMPT = """Generate 20 diverse, informative, and engaging question-answer pairs about extremely concise travel itinary following these guidelines. Ensure each pair is independent and self-contained. """
-NUM_ITERATIONS = 1 # Loop to generate and save the content
+NUM_ITERATIONS = 5 # Loop to generate and save the content
 
 def generate():
     print("generate()")
