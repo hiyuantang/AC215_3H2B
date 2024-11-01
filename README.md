@@ -102,14 +102,40 @@ We generated a dataset of 500 pairs of question and answer pairs for fine-tuning
 
 ```
 - Example Pair 1:
-	- Question: My family and I are going to Rome for 5 days in April, eager to immerse ourselves in ancient history and iconic landmarks. Can you create a concise itinerary with only days and locations, focusing on the historical significance of this city?
-	- Answer: 5-Day Family Rome Itinerary for April\nDay 1: Ancient Wonders & Colosseum Majesty\n- Roman Forum\n- Colosseum\n- Palatine Hill\nDay 2: Vatican City & Artistic Treasures\n- Vatican Museums\n- Sistine Chapel\n- St. Peter's Basilica\nDay 3: Trastevere Charm & Local Flavors\n- Trastevere Neighborhood\n- Campo de' Fiori\n- Pantheon\nDay 4: Ancient Baths & Secret Gardens\n- Baths of Caracalla\n- Borghese Gallery & Gardens\n- Trevi Fountain\nDay 5: Historical Delights & Roman Views\n- Spanish Steps\n- Piazza Navona\n- Castel Sant'Angelo
+	* Question:
+      Location: Lisbon, Days: 3, Month: September, Type: Losing Friends. This is the first stage of creating an itinerary. As a professional travel planner, can you create a concise itinerary using the TDLN format? TDLN includes only the theme, days, and location names, each on a new line. The format requires that no '()' be used to explain the location, and no additional information should be provided unless specified in the prompt.
+	* Answer: 
+      3-Day Losing Friends Itinerary in Lisbon for September
+      Day 1:  Nostalgic Walks and City Reflections
+      -  Belém Tower
+      -  Jerónimos Monastery
+      -  Alfama District
+      -  Miradouro de Santa Luzia
+      Day 2:  Historical Echoes and Seeking Comfort
+      -  Castelo de São Jorge
+      -  Lisbon Cathedral
+      -  National Tile Museum
+      -  Fado Show
+      Day 3:  Coastal Tranquility and Personal Growth
+      -  Praia da Adraga
+      -  Cabo da Roca
+      -  Cascais
 ```
 
 ```
 - Example Pair 2:
-	- Question: Location: Bangkok, Days: 4, month: January, type: Culinary. What is a concise itinerary for my trip?
-	- Answer: 5-Day Culinary Itinerary in Bangkok for January\nDay 1: Street Food Delights and Market Explorations\n- Chatuchak Weekend Market\n- Yaowarat (Chinatown)\n- Sukhumvit Street Food\nDay 2: Authentic Thai Cuisine and Fine Dining\n- Nahm\n- Bo.lan\n- Gaggan Anand\nDay 3: Riverfront Dining and Night Market Delights\n- Asiatique The Riverfront\n- Ratchada Night Market\n- Khao San Road\nDay 4: Traditional Thai Dishes and Culinary Workshops\n- Thipsamai Pad Thai\n- Somboon Seafood\n- Blue Elephant Cooking School
+	* Question: 
+      Location: Venice, Days: 2, Month: February, Type: Luxury. This is the first stage of creating an itinerary. As a professional travel planner, can you create a concise itinerary using the TDLN format? TDLN includes only the theme, days, and location names, each on a new line. The format requires that no '()' be used to explain the location, and no additional information should be provided unless specified in the prompt.
+	* Answer: 
+      2-Day Luxury Itinerary in Venice for February
+      Day 1: Gondola Ride and Artistic Splendor
+      - Doge's Palace
+      - St. Mark's Basilica
+      - Rialto Bridge
+      Day 2: Exquisite Dining and Artistic Immersion
+      - Peggy Guggenheim Collection
+      - Harry's Bar
+      - La Fenice Opera House
 ```
 
 The goal for fine-tuning the LLM on this dataset is to make the model respond by following a strict format of a travel itinerary. The format is as follows:
