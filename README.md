@@ -1,5 +1,13 @@
 #### Project Milestone 3 Organization
 
+<font color="green">
+Updates: 
+
+We have made significant changes to the `dataset-creator`, specifically modifying the system instructions for creating datasets. This includes changes to the system prompt in `cli.py` as well as alterations to the final dataset used for fine-tuning. Details of these changes can be seen in the examples provided in this README's `Strict Format Dataset` section. The question in the question-and-answer pairs now follows a consistent pattern, altering only the city, dates, and type information while maintaining a consistent style of requesting itinerary generation.
+
+Additionally, we have introduced an extra step in the data versioning section of the README. This step involves utilizing git tag to manage versioning.
+</font>
+
 ```
 ├── Readme.md
 ├── data
@@ -102,8 +110,10 @@ We generated a dataset of 500 pairs of question and answer pairs for fine-tuning
 
 ```
 - Example Pair 1:
+
 	* Question:
       Location: Lisbon, Days: 3, Month: September, Type: Losing Friends. This is the first stage of creating an itinerary. As a professional travel planner, can you create a concise itinerary using the TDLN format? TDLN includes only the theme, days, and location names, each on a new line. The format requires that no '()' be used to explain the location, and no additional information should be provided unless specified in the prompt.
+
 	* Answer: 
       3-Day Losing Friends Itinerary in Lisbon for September
       Day 1:  Nostalgic Walks and City Reflections
@@ -124,8 +134,10 @@ We generated a dataset of 500 pairs of question and answer pairs for fine-tuning
 
 ```
 - Example Pair 2:
+
 	* Question: 
       Location: Venice, Days: 2, Month: February, Type: Luxury. This is the first stage of creating an itinerary. As a professional travel planner, can you create a concise itinerary using the TDLN format? TDLN includes only the theme, days, and location names, each on a new line. The format requires that no '()' be used to explain the location, and no additional information should be provided unless specified in the prompt.
+
 	* Answer: 
       2-Day Luxury Itinerary in Venice for February
       Day 1: Gondola Ride and Artistic Splendor
@@ -224,6 +236,7 @@ The container is responsible for versioning the Strict Format Dataset. It will c
    `dvc add src/dataset-creator/data/*.csv`<br />
    `git add .`<br />
    `git commit -m <message>`<br />
+   <font color="green">`git tag -a <tag name> -m <tag message>`</font><br />
    `dvc push -r llm_strict_format_dataset`
 
 Make sure to replace `<message>` with the actual git commit message.
