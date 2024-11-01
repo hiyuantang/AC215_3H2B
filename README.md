@@ -98,7 +98,7 @@ Yuan Tang, Brian Sutioso, Jiho Kil, Wenyu Yang
 
 In this project, we’re developing an LLM-powered travel planner application. The app will take user inputs, such as their travel destination (city), duration, dates or months, and type of trip. The LLM will then generate a carefully tailored and considerate travel itinerary based on these inputs. Additionally, a Google map will display the locations and routes for each day of the trip, providing users with visual reference. We’ll be using techniques like fine-tuning, RAG, and chain of thoughts to enhance the quality and consistency of the output. 
 
-### Milestone2 ###
+### Milestone 3 ###
 
 In this milestone, we have the components for data versioning, data creation, LLM fine-tuning, and RAG. 
 
