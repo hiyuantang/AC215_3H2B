@@ -1,11 +1,12 @@
 #### Project Milestone 3 Organization
 
-<font color="green">Updates:</font>
+***Updates:***
 
-<font color="green">We have made significant changes to the `dataset-creator`, specifically modifying the system instructions for creating datasets. This includes changes to the system prompt in `cli.py` as well as alterations to the final dataset used for fine-tuning. Details of these changes can be seen in the examples provided in this README's `Strict Format Dataset` section. The question in the question-and-answer pairs now follows a consistent pattern, altering only the city, dates, and type information while maintaining a consistent style of requesting itinerary generation.</font>
+***We have made significant changes to the `dataset-creator`, specifically modifying the system instructions for creating datasets. This includes changes to the system prompt in `cli.py` as well as alterations to the final dataset used for fine-tuning. Details of these changes can be seen in the examples provided in this README's `Strict Format Dataset` section. The question in the question-and-answer pairs now follows a consistent pattern, altering only the city, dates, and type information while maintaining a consistent style of requesting itinerary generation.***
 
-<font color="green">Additionally, we have introduced an extra step in the data versioning section of the README. This step involves utilizing git tag to manage versioning.
-</font>
+***Additionally, we have introduced an extra step in the data versioning section of the README. This step involves utilizing git tag to manage versioning.***
+
+***Changes made are highlighted in bold and italic.***
 
 ```
 ├── Readme.md
@@ -103,7 +104,7 @@ In this milestone, we have the components for data versioning, data creation, LL
 
 ## Introduction to Datasets ##
 
-**Strict Format Dataset**
+***Strict Format Dataset***
 
 We generated a dataset of 500 pairs of question and answer pairs for fine-tuning the `Gemini 1.5 flash 002` model to behave in a way that facilitates us extracting days, themes, and location information. Specifically, the days and location information will go through a native route optimization to reduce the total distance for each day of the trip. With that in mind, the question and answer pair is formated in a way that the question will ask for a concise thematic travel itinerary and the answer will provide the itinerary in a strict format. For example:
 
@@ -235,7 +236,7 @@ The container is responsible for versioning the Strict Format Dataset. It will c
    `dvc add src/dataset-creator/data/*.csv`<br />
    `git add .`<br />
    `git commit -m <message>`<br />
-   <font color="green">`git tag -a <tag name> -m <tag message>`</font><br />
+   ***`git tag -a <tag name> -m <tag message>`***<br />
    `dvc push -r llm_strict_format_dataset`
 
 Make sure to replace `<message>` with the actual git commit message.
@@ -257,6 +258,7 @@ The container generates the 500 question & answer pairs dataset, `Strict Format 
    `dvc add src/dataset-creator/data/*.csv`<br />
    `git add .`<br />
    `git commit -m <message>`<br />
+   ***`git tag -a <tag name> -m <tag message>`***<br />
    `dvc push -r llm_strict_format_dataset`
 
 **Gemini Finetuner Container**
