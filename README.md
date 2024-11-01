@@ -1,11 +1,10 @@
 #### Project Milestone 3 Organization
 
-<font color="green">
-Updates: 
+<font color="green">Updates:</font>
 
-We have made significant changes to the `dataset-creator`, specifically modifying the system instructions for creating datasets. This includes changes to the system prompt in `cli.py` as well as alterations to the final dataset used for fine-tuning. Details of these changes can be seen in the examples provided in this README's `Strict Format Dataset` section. The question in the question-and-answer pairs now follows a consistent pattern, altering only the city, dates, and type information while maintaining a consistent style of requesting itinerary generation.
+<font color="green">We have made significant changes to the `dataset-creator`, specifically modifying the system instructions for creating datasets. This includes changes to the system prompt in `cli.py` as well as alterations to the final dataset used for fine-tuning. Details of these changes can be seen in the examples provided in this README's `Strict Format Dataset` section. The question in the question-and-answer pairs now follows a consistent pattern, altering only the city, dates, and type information while maintaining a consistent style of requesting itinerary generation.</font>
 
-Additionally, we have introduced an extra step in the data versioning section of the README. This step involves utilizing git tag to manage versioning.
+<font color="green">Additionally, we have introduced an extra step in the data versioning section of the README. This step involves utilizing git tag to manage versioning.
 </font>
 
 ```
@@ -84,7 +83,7 @@ Additionally, we have introduced an extra step in the data versioning section of
 
 ```
 
-### AC215 - Milestone 3 - LLM-powered Trip Planner App ###
+### AC215 - Milestone 3 - Tripee: LLM-powered Trip Planner App ###
 
 **Team Members**
 
