@@ -1,4 +1,4 @@
-#### Project Milestone 2 Organization
+#### Project Milestone 3 Organization
 
 ```
 ├── Readme.md
@@ -76,7 +76,7 @@
 
 ```
 
-### AC215 - Milestone2 - LLM-powered Trip Planner App ###
+### AC215 - Milestone 3 - LLM-powered Trip Planner App ###
 
 **Team Members**
 
@@ -141,7 +141,7 @@ The scraper starts by targeting the Wikipedia pages of the specified cities. It 
 
 ## Containers ##
 
-We offer two options for building and running containers for Milestone 2:
+We offer two options for building and running containers for Milestone 3:
 - Build and run all containers at once. __(recommended)__
 - Build and run a single container or a set of containers that perform a single function.
 
