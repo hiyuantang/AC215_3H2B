@@ -34,6 +34,12 @@ RUN set -ex; \
     chown app:app /app
 
 
+
+RUN if [ "${DEV}" = "true" ]; then \
+    pipenv install --dev; \
+    fi
+
+
 # Switch to the new user
 USER app
 WORKDIR /app
