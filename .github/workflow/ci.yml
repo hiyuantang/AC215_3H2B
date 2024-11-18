@@ -1,24 +1,17 @@
-name: Continuous Integration
+name: CI
 
 on:
   push:
-    branches:
-      - main
-      - automation
+    branches: [ "main", "automation" ]
   pull_request:
-    branches:
-      - main
-      - automation
+    branches: [ "main", "automation" ]
+  workflow_dispatch:
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
-        with:
-          path: 'AC215_3H2B'
+      - uses: actions/checkout@v4
 
       - name: Set up Docker
         uses: docker/setup-qemu-action@v1
@@ -30,12 +23,12 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cd AC215_3H2B/src/llm-rag  
+          cd AC215_3H2B/src/llm-rag
           docker build -t llm-rag-cli .
 
       - name: Run tests in Docker
         run: |
-          cd AC215_3H2B/src/llm-rag  # Ensure you are in the right directory
+          cd AC215_3H2B/src/llm-rag
           docker run -it --rm \
             -v "${{ github.workspace }}/AC215_3H2B/src/llm-rag:/app" \
             --entrypoint /bin/bash \
@@ -49,3 +42,4 @@ jobs:
           file: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
+
