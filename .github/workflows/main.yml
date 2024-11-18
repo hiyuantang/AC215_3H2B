@@ -2,11 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [ "main", "automation" ]
+    branches: [ "main" ]  
   pull_request:
-    branches: [ "main", "automation" ]
-  workflow_dispatch:
-
+    branches: [ "main" ] 
+  workflow_dispatch: 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -22,18 +21,12 @@ jobs:
 
       - name: Build Docker image
         run: |
-          pwd
-          ls -l
-          cd src/llm-rag
           docker build -t llm-rag-cli .
 
       - name: Run tests in Docker
         run: |
-          pwd
-          ls -l
-          cd src/llm-rag
           docker run -it --rm \
-            -v "${{ github.workspace }}/src/llm-rag:/app" \
+            -v "${{ github.workspace }}:/app" \
             --entrypoint /bin/bash \
             llm-rag-cli \
             -c "cd /app && PYTHONPATH=/app pipenv install --dev && PYTHONPATH=/app pipenv run pytest tests/ -v --cov=. --cov-report=term-missing"
@@ -42,6 +35,9 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
           file: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
