@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main", "automation" ]
   pull_request:
-    branches: [ "main", "automation" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -20,23 +20,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: List directories
+      - name: List root directories after checkout
         run: |
           pwd
           ls -la
 
-      - name: Adjust path for automation branch
-        if: contains(github.ref, 'refs/heads/automation')
-        run: |
-          cd src/llm-rag
-          echo "Switched to automation branch directory"
-
-      - name: Adjust path for main branch
-        if: contains(github.ref, 'refs/heads/main')
-        run: |
-          echo "Main branch does not require directory change"
-
-      - name: Change to script directory and run test shell script
+      - name: Conditional execution for automation branch or PRs to main
+        if: github.ref == 'refs/heads/automation' || (github.event.pull_request && contains(github.head_ref, 'automation'))
         run: |
           cd src/llm-rag
           chmod +x ./test-shell.sh
@@ -47,6 +37,8 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
           flags: unittests
           name: codecov-umbrella
 
