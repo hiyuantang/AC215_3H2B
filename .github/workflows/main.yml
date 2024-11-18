@@ -25,7 +25,18 @@ jobs:
           pwd
           ls -la
 
-      - name: Run test script
+      - name: Adjust path for automation branch
+        if: contains(github.ref, 'refs/heads/automation')
+        run: |
+          cd src/llm-rag
+          echo "Switched to automation branch directory"
+
+      - name: Adjust path for main branch
+        if: contains(github.ref, 'refs/heads/main')
+        run: |
+          echo "Main branch does not require directory change"
+
+      - name: Run test shell script
         run: |
           chmod +x ./test-shell.sh
           ./test-shell.sh
@@ -37,6 +48,4 @@ jobs:
           file: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
-          file: ./coverage.xml
-          flags: unittests
-          name: codecov-umbrella
+
