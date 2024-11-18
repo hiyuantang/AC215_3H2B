@@ -25,33 +25,18 @@ jobs:
           pwd
           ls -la
 
-      - name: Adjust path for automation branch
-        if: contains(github.ref, 'refs/heads/automation')
+      - name: Run test script
         run: |
-          cd src/llm-rag
-          echo "Switched to automation branch directory"
-
-      - name: Adjust path for main branch
-        if: contains(github.ref, 'refs/heads/main')
-        run: |
-          echo "Main branch does not require directory change"
-
-      - name: Build Docker image
-        run: |
-          docker build -t llm-rag-cli .
-
-      - name: Run tests in Docker
-        run: |
-          docker run -it --rm \
-            -v "${{ github.workspace }}:/app" \
-            --entrypoint /bin/bash \
-            llm-rag-cli \
-            -c "cd /app && PYTHONPATH=/app pipenv install --dev && PYTHONPATH=/app pipenv run pytest tests/ -v --cov=. --cov-report=term-missing"
+          chmod +x ./test-shell.sh
+          ./test-shell.sh
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
           file: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
