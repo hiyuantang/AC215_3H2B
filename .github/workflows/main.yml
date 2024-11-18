@@ -23,12 +23,12 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cd src/llm-rag  
+          cd src/llm-rag
           docker build -t llm-rag-cli .
 
       - name: Run tests in Docker
         run: |
-          cd src/llm-rag  # Adjusted path
+          cd src/llm-rag
           docker run -it --rm \
             -v "${{ github.workspace }}/src/llm-rag:/app" \
             --entrypoint /bin/bash \
