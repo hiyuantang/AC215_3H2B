@@ -36,8 +36,9 @@ jobs:
         run: |
           echo "Main branch does not require directory change"
 
-      - name: Run test shell script
+      - name: Change to script directory and run test shell script
         run: |
+          cd src/llm-rag
           chmod +x ./test-shell.sh
           ./test-shell.sh
 
