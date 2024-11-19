@@ -30,12 +30,8 @@ jobs:
           chmod +x ./test-shell.sh
           ./test-shell.sh
 
-      - name: Generate logs
-        run: |
-          script/generate_logs.sh > build_logs.txt
-
       - name: Upload logs as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: logs
           path: build_logs.txt
