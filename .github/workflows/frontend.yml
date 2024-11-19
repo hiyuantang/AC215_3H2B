@@ -3,10 +3,12 @@ name: Build, Lint, and Test frontend
 on:
   push:
     branches:
-      - frontend
+      - main
+      - milestone4
   pull_request:
     branches:
-      - frontend
+      - main
+      - milestone4
 
 jobs:
   frontend:
