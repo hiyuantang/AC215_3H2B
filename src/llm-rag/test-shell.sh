@@ -10,4 +10,4 @@ docker run -it --rm \
     -v "$(pwd):/app" \
     --entrypoint /bin/bash \
     llm-rag-cli \
-    -c "cd /app && PYTHONPATH=/app pipenv install --dev && PYTHONPATH=/app pipenv run pytest tests/ -v --cov=. --cov-report=term-missing"
+    -c "cd /app && PYTHONPATH=/app pipenv install --dev && PYTHONPATH=/app pipenv run pytest tests/ -v --cov=. --cov-report=xml"
