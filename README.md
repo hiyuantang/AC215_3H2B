@@ -65,11 +65,15 @@
     ├── frontend
     │   ├── src/app
     │   │   └── *
+    │   ├── tests
+    │   │   └── *
     │   ├── .dockerignore
     │   ├── .eslintrc.json
     │   ├── .gitignore
     │   ├── docker-shell.sh
     │   ├── Dockerfile
+    │   ├── jest.config.js
+    │   ├── jest.setup.js
     │   ├── next.config.mjs
     │   ├── package-lock.json
     │   ├── package.json
