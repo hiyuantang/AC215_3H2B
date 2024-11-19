@@ -30,10 +30,12 @@ jobs:
           chmod +x ./test-shell.sh
           ./test-shell.sh
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+      - name: Generate logs
+        run: |
+          script/generate_logs.sh > build_logs.txt
+
+      - name: Upload logs as artifact
+        uses: actions/upload-artifact@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
-          flags: unittests
-          name: codecov-umbrella
+          name: logs
+          path: build_logs.txt
