@@ -1,36 +1,24 @@
 'use client';
 
 import {
-    Box, Heading, Text, VStack, Button, useToast
+    Box, Heading, Text, VStack, Button
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Marker, Polyline } from "@react-google-maps/api";
 import { useRouter } from 'next/navigation';
 
-// Example API data for itinerary (replace later with actual API calls)
 const getTripDetails = async () => {
-    return [
-        {
-            day: 1,
-            time: "10:00 AM",
-            theme: "Architectural",
-            locations: [
-                { lat: 51.4993, lng: -0.1273, name: "Westminster Abbey", reason: "Historic site with rich history", tips: "Arrive early to avoid crowds" },
-                { lat: 51.5081, lng: -0.0759, name: "Tower of London", reason: "Historic site with rich history", tips: "Arrive early to avoid crowds" },
-                { lat: 51.5138, lng: -0.0984, name: "St. Paul's Cathedral", reason: "Historic site with rich history", tips: "Arrive early to avoid crowds" }
-            ]
-        },
-        {
-            day: 2,
-            time: "11:00 AM",
-            theme: "Artistic",
-            locations: [
-                { lat: 51.5089, lng: -0.1283, name: "National Gallery", reason: "Historic site with rich history", tips: "Arrive early to avoid crowds" },
-                { lat: 51.5076, lng: -0.0994, name: "Tate Modern", reason: "Historic site with rich history", tips: "Arrive early to avoid crowds" },
-                { lat: 51.5081, lng: -0.0977, name: "Shakespeare's Globe", reason: "Historic site with rich history", tips: "Arrive early to avoid crowds" }
-            ]
+    try {
+        const response = await fetch('/api/trip-details');
+        if (!response.ok) {
+            throw new Error('Failed to fetch trip details');
         }
-    ];
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching trip details:', error);
+        return [];
+    }
 };
 
 // Calculate center of multiple coordinates
