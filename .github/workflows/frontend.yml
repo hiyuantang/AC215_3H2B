@@ -36,3 +36,6 @@ jobs:
       with:
         name: coverage-report
         path: coverage
+    
+    - name: Debug Coverage Directory
+      run: ls -R ${{ github.workspace }}/coverage
