@@ -27,7 +27,7 @@ jobs:
 
     - name: Run tests with coverage
       working-directory: src/frontend
-      run: docker run --rm -v ${{ github.workspace }}/coverage:/usr/src/app/coverage frontend npm run test
+      run: docker run --rm -e NODE_ENV=development -v ${{ github.workspace }}/coverage:/usr/src/app/coverage frontend npm run test
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v3
