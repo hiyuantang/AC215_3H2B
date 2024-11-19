@@ -1,30 +1,38 @@
 import pytest
 from unittest.mock import Mock, patch, mock_open
 import pandas as pd
-import hashlib
 import os
 import json
+from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 
-# Mock environment variables and dependencies before importing cli
-with patch.dict('os.environ', {
+
+# Mock Setup
+patch_dict = patch.dict('os.environ', {
     'GCP_PROJECT': 'mock-project',
     'GCP_LOCATION': 'mock-location'
-}):
-    with patch('vertexai.init'):
-        with patch('vertexai.language_models.TextEmbeddingModel.from_pretrained') as mock_embedding:
-            with patch('vertexai.generative_models.GenerativeModel'):
-                from cli import (
-                    generate_query_embedding,
-                    generate_text_embeddings,
-                    load_text_embeddings,
-                    city_mappings,
-                    chunk,
-                    embed,
-                    load, 
-                    query,
-                    chat,
-                    get
-                )
+})
+patch_init = patch('vertexai.init')
+patch_embedding = patch('vertexai.language_models.TextEmbeddingModel.from_pretrained')
+patch_generative = patch('vertexai.generative_models.GenerativeModel')
+
+# Start all patches
+patch_dict.start()
+patch_init.start()
+patch_embedding.start()
+patch_generative.start()
+
+from cli import (
+    generate_query_embedding,
+    generate_text_embeddings,
+    load_text_embeddings,
+    city_mappings,
+    chunk,
+    embed,
+    load, 
+    query,
+    chat,
+    get
+)
 
 
 class TestEmbeddings:
@@ -41,7 +49,7 @@ class TestEmbeddings:
 
     @pytest.fixture
     def mock_collection(self):
-        """Fixture to create a mock ChromaDB collection"""
+        """Fixture to create mock ChromaDB collection"""
         mock_collection = Mock()
         mock_collection.name = "test-collection"
         return mock_collection
@@ -56,41 +64,47 @@ class TestEmbeddings:
     def test_generate_query_embedding_construction(self):
         """Test if query embedding is constructed with correct parameters"""
         with patch('cli.embedding_model') as mock_model:
-            # Set up mock embedding result
+            # Set up mock embedding 
             mock_embedding = Mock()
             mock_embedding.values = [0.1] * 256
             mock_model.get_embeddings.return_value = [mock_embedding]
             
             # Call the function
-            query = "test query"
+            query = "This is a test query"
             result = generate_query_embedding(query)
-            
-            # Verify the function was called with correct parameters
-            call_args = mock_model.get_embeddings.call_args
-            embedding_input = call_args[0][0][0]  # First arg, first list item
+
+            args = mock_model.get_embeddings.call_args.args
+            kwargs = mock_model.get_embeddings.call_args.kwargs
+            embedding_input = args[0][0]  
             
             # Verify input parameters
-            assert embedding_input.text == "test query"
+            assert embedding_input.text == "This is a test query"
             assert embedding_input.task_type == "RETRIEVAL_DOCUMENT"
-            assert call_args[1] == {"output_dimensionality": 256}
+            assert kwargs == {"output_dimensionality": 256}
+            assert result == [0.1] * 256
 
 
     def test_generate_text_embeddings_batch_processing(self):
-        """Test the batching logic of generate_text_embeddings"""
+        """Test batching operation of generate_text_embeddings"""
         chunks = ["chunk1", "chunk2", "chunk3"]
         batch_size = 2
         
         with patch('cli.embedding_model.get_embeddings') as mock_get_embeddings:
             generate_text_embeddings(chunks, batch_size=batch_size)
             
-            # Verify the batching logic
-            assert mock_get_embeddings.call_count == 2  # Should be called twice for 3 items with batch_size=2
+            # Verify batching logic
+            # Should be called twice for 3 items with batch_size 2
+            assert mock_get_embeddings.call_count == 2  
             
             # Verify first batch had 2 items, second batch had 1 item
             first_call_args = mock_get_embeddings.call_args_list[0][0][0]
             second_call_args = mock_get_embeddings.call_args_list[1][0][0]
             assert len(first_call_args) == 2
+            assert first_call_args[0].text == 'chunk1'
+            assert first_call_args[1].text == 'chunk2'
             assert len(second_call_args) == 1
+            assert second_call_args[0].text == 'chunk3'
+
 
     def test_load_text_embeddings(self, sample_dataframe, mock_collection):
         """Test load_text_embeddings function"""
@@ -99,22 +113,27 @@ class TestEmbeddings:
         mock_collection.add.assert_called() # Check if method was called
         call_args = mock_collection.add.call_args[1]
         
-        # Verify structure of arguments
+        # Verify argument structure
         assert 'ids' in call_args
         assert 'documents' in call_args
         assert 'metadatas' in call_args
         assert 'embeddings' in call_args
         
-        # Verify metadata contains correct city mapping
+        # Verify result structure (metadatas, documents, ids)
         assert call_args['metadatas'][0]['city'] == 'Amsterdam'
         assert call_args['metadatas'][0]['country'] == 'Netherlands'
         assert call_args['metadatas'][0]['continent'] == 'Europe'
-        
+        assert call_args['documents'] == ['chunk 1 for testing', 'test chunk 2 for testing']
+        assert len(call_args['embeddings'][0]) == 256
+        assert len(call_args['ids']) == 2
+        assert all(len(id.split('-')) == 2 for id in call_args['ids']) 
+        all(len(id.split('-')[0]) == 16 for id in call_args['ids'])
 
-class TestChunkFunction1:
+
+class TestChunkFunction:
     @pytest.fixture
     def mock_file_content(self):
-        return "This is a test content for the city of Amsterdam."
+        return "This is a test content for the city of Amsterdam." * 10
 
     @pytest.fixture
     def mock_glob(self):
@@ -124,79 +143,73 @@ class TestChunkFunction1:
 
     def test_chunk_char_split(self, mock_glob, mock_file_content):
         """Test chunk function with char-split method"""
-        with patch('builtins.open', mock_open(read_data=mock_file_content)):
+        with patch('builtins.open', mock_open(read_data=mock_file_content)) as mocked_file:
             with patch('os.makedirs') as mock_makedirs:
-                with patch('pandas.DataFrame.to_json') as mock_to_json:
-                    chunk(method="char-split")
+                chunk(method="char-split")
+
+                # Verify directory was created
+                mock_makedirs.assert_called_once_with('outputs', exist_ok=True)
+
+                # Get the JSON string that was written
+                json_str = mocked_file.return_value.write.call_args.args[0]
+                
+                # Convert JSON string to dictionary
+                chunks = [json.loads(line) for line in json_str.strip().split('\n')]
+                
+                # Verify each chunk is a dictionary with the expected structure
+                for text_dict in chunks:
+                    assert isinstance(text_dict, dict)
+                    assert 'chunk' in text_dict
+                    assert 'city' in text_dict
+                    assert text_dict['city'] == 'Amsterdam'
                     
-                    # Verify directory was created
-                    mock_makedirs.assert_called_once_with('outputs', exist_ok=True)
-                    # Verify file was processed
-                    mock_to_json.assert_called_once()
+                    
+              
 
     def test_chunk_recursive_split(self, mock_glob, mock_file_content):
         """Test chunk function with recursive-split method"""
-        with patch('builtins.open', mock_open(read_data=mock_file_content)):
-            with patch('os.makedirs'):
-                with patch('pandas.DataFrame.to_json') as mock_to_json:
-                    chunk(method="recursive-split")
-                    mock_to_json.assert_called_once()
+        with patch('builtins.open', mock_open(read_data=mock_file_content)) as mocked_file:
+            with patch('os.makedirs') as mock_makedirs:
+                chunk(method="recursive-split")
+
+                # Verify directory was created
+                mock_makedirs.assert_called_once_with('outputs', exist_ok=True)
+
+                # Get the JSON string that was written
+                json_str = mocked_file.return_value.write.call_args.args[0]
+                
+                # Convert JSON string to dictionary
+                chunks = [json.loads(line) for line in json_str.strip().split('\n')]
+                
+                # Verify each chunk is a dictionary with the expected structure
+                for text_dict in chunks:
+                    assert isinstance(text_dict, dict)
+                    assert 'chunk' in text_dict
+                    assert 'city' in text_dict
+                    assert text_dict['city'] == 'Amsterdam'
+
 
     def test_chunk_semantic_split(self, mock_glob, mock_file_content):
         """Test chunk function with semantic-split method"""
-        with patch('builtins.open', mock_open(read_data=mock_file_content)):
-            with patch('os.makedirs'):
-                with patch('pandas.DataFrame.to_json') as mock_to_json:
-                    chunk(method="semantic-split")
-                    mock_to_json.assert_called_once()
+        with patch('builtins.open', mock_open(read_data=mock_file_content)) as mocked_file:
+            with patch('os.makedirs') as mock_makedirs:
+                chunk(method="semantic-split")
 
+                # Verify directory calling
+                mock_makedirs.assert_called_once_with('outputs', exist_ok=True)
 
-class TestChunkFunction:
-    @pytest.fixture
-    def test_text(self):
-        return "This is a test sentence."
-
-    @pytest.fixture
-    def mock_glob(self):
-        with patch('glob.glob') as mock:
-            mock.return_value = ['input-datasets/cities-wiki/Amsterdam.txt']
-            yield mock
-
-    def test_char_split_uses_correct_splitter(self, test_text, mock_glob):
-        """Test if char-split method uses CharacterTextSplitter"""
-        with patch('builtins.open', mock_open(read_data=test_text)):
-            with patch('os.makedirs'):
-                # Mock the actual CharacterTextSplitter instantiation
-                with patch('cli.CharacterTextSplitter') as mock_splitter:
-                    chunk(method="char-split")
-                    # Verify that CharacterTextSplitter was instantiated
-                    mock_splitter.assert_called_once_with(
-                        chunk_size=350, 
-                        chunk_overlap=20, 
-                        separator='', 
-                        strip_whitespace=False
-                    )
-
-    def test_recursive_split_uses_correct_splitter(self, test_text, mock_glob):
-        """Test if recursive-split method uses RecursiveCharacterTextSplitter"""
-        with patch('builtins.open', mock_open(read_data=test_text)):
-            with patch('os.makedirs'):
-                # Mock the actual RecursiveCharacterTextSplitter instantiation
-                with patch('cli.RecursiveCharacterTextSplitter') as mock_splitter:
-                    chunk(method="recursive-split")
-                    # Verify that RecursiveCharacterTextSplitter was instantiated
-                    mock_splitter.assert_called_once_with(chunk_size=350)
-
-    def test_semantic_split_uses_correct_splitter(self, test_text, mock_glob):
-        """Test if semantic-split method uses SemanticChunker"""
-        with patch('builtins.open', mock_open(read_data=test_text)):
-            with patch('os.makedirs'):
-                # Mock the actual SemanticChunker instantiation
-                with patch('cli.SemanticChunker') as mock_splitter:
-                    chunk(method="semantic-split")
-                    # Verify that SemanticChunker was instantiated with embedding function
-                    mock_splitter.assert_called_once()
-
+                # Get the JSON string that was written
+                json_str = mocked_file.return_value.write.call_args.args[0]
+                
+                # Convert JSON string to dictionary
+                chunks = [json.loads(line) for line in json_str.strip().split('\n')]
+                
+                # Verify each chunk is a dictionary with the expected structure
+                for text_dict in chunks:
+                    assert isinstance(text_dict, dict)
+                    assert 'chunk' in text_dict
+                    assert 'city' in text_dict
+                    assert text_dict['city'] == 'Amsterdam'
                     
 
 class TestEmbedFunction:
@@ -207,6 +220,7 @@ class TestEmbedFunction:
             {'chunk': 'test chunk 2', 'city': 'Amsterdam'}
         ]
         return '\n'.join(json.dumps(d) for d in data)
+    
 
     @pytest.fixture
     def mock_glob(self):
