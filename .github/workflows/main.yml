@@ -1,5 +1,3 @@
-name: CI
-
 on:
   push:
     branches: [ "main" ]
@@ -22,6 +20,7 @@ jobs:
         run: |
           pwd
           ls -la
+          echo "Listing root directories after checkout" >> action_logs.txt
 
       - name: Conditional execution for automation branch or PRs to main
         if: github.ref == 'refs/heads/automation' || (github.event.pull_request && contains(github.head_ref, 'automation'))
@@ -29,9 +28,10 @@ jobs:
           cd src/llm-rag
           chmod +x ./test-shell.sh
           ./test-shell.sh
+          echo "Executed automation script" >> action_logs.txt
 
-      - name: Upload logs as artifact
+      - name: Upload Logs as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: logs
-          path: build_logs.txt
+          path: action_logs.txt
