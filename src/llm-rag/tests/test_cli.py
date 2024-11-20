@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import Mock, patch, mock_open
 import pandas as pd
 import os
+from io import StringIO
 import json
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 
@@ -160,6 +161,7 @@ class TestChunkFunction:
                 for text_dict in chunks:
                     assert isinstance(text_dict, dict)
                     assert 'chunk' in text_dict
+                    assert len(text_dict['chunk']) <= 350
                     assert 'city' in text_dict
                     assert text_dict['city'] == 'Amsterdam'
                     
@@ -185,6 +187,7 @@ class TestChunkFunction:
                 for text_dict in chunks:
                     assert isinstance(text_dict, dict)
                     assert 'chunk' in text_dict
+                    assert len(text_dict['chunk']) <= 350
                     assert 'city' in text_dict
                     assert text_dict['city'] == 'Amsterdam'
 
@@ -216,8 +219,8 @@ class TestEmbedFunction:
     @pytest.fixture
     def mock_jsonl_content(self):
         data = [
-            {'chunk': 'test chunk 1', 'city': 'Amsterdam'},
-            {'chunk': 'test chunk 2', 'city': 'Amsterdam'}
+            {'chunk': 'This is first test chunk'*10, 'city': 'Amsterdam'},
+            {'chunk': 'This is second test chunk'*10, 'city': 'Amsterdam'}
         ]
         return '\n'.join(json.dumps(d) for d in data)
     
@@ -225,29 +228,73 @@ class TestEmbedFunction:
     @pytest.fixture
     def mock_glob(self):
         with patch('glob.glob') as mock:
-            mock.return_value = ['outputs/chunks-char-split-Amsterdam.jsonl']
+            mock.return_value = ['outputs/chunks-different-split-Amsterdam.jsonl']
             yield mock
+
 
     def test_embed_char_split(self, mock_glob, mock_jsonl_content):
         """Test embed function with char-split method"""
-        with patch('pandas.read_json'):
+        # Mock dataframe as a result of reading json
+        data_df = pd.read_json(StringIO(mock_jsonl_content), lines=True)
+        with patch('pandas.read_json', return_value = data_df) as mock_read_json:
             with patch('cli.generate_text_embeddings') as mock_gen_embed:
-                mock_gen_embed.return_value = [[0.1] * 256, [0.1] * 256]
-                with patch('builtins.open', mock_open()):
+                mock_embeddings = [[0.1] * 256, [0.1] * 256]
+                mock_gen_embed.return_value = mock_embeddings
+                with patch('builtins.open', mock_open()) as mock_file:
                     embed(method="char-split")
-                    mock_gen_embed.assert_called_once()
+                    # Verify glob calling
+                    mock_glob.assert_called_once()
+                    # Verify calling read_json
+                    mock_read_json.assert_called_once_with(
+                        'outputs/chunks-different-split-Amsterdam.jsonl', 
+                        lines=True
+                    )
+
+                    mock_gen_embed.assert_called_once_with(
+                        data_df['chunk'].values,
+                        256, 
+                        batch_size=100
+                    )
+
+                    # Verify file writing 
+                    mock_file.assert_called_once_with(
+                        'outputs/embeddings-different-split-Amsterdam.jsonl', 
+                        'w'
+                    )
+
 
     def test_embed_semantic_split(self, mock_glob, mock_jsonl_content):
         """Test embed function with semantic-split method"""
-        with patch('pandas.read_json'):
+        # Mock dataframe as a result of reading json
+        data_df = pd.read_json(StringIO(mock_jsonl_content), lines=True)
+        with patch('pandas.read_json', return_value = data_df) as mock_read_json:
             with patch('cli.generate_text_embeddings') as mock_gen_embed:
-                mock_gen_embed.return_value = [[0.1] * 256, [0.1] * 256]
-                with patch('builtins.open', mock_open()):
+                mock_embeddings = [[0.1] * 256, [0.1] * 256]
+                mock_gen_embed.return_value = mock_embeddings
+                with patch('builtins.open', mock_open()) as mock_file:
                     embed(method="semantic-split")
-                    mock_gen_embed.assert_called_once()
+                    # Verify glob calling
+                    mock_glob.assert_called_once()
+                    # Verify calling read_json
+                    mock_read_json.assert_called_once_with(
+                        'outputs/chunks-different-split-Amsterdam.jsonl', 
+                        lines=True
+                    )
+
+                    mock_gen_embed.assert_called_once_with(
+                        data_df['chunk'].values,
+                        256, 
+                        batch_size=10
+                    )
 
 
-
+    # Should complete even when processing no files
+    def test_embed_with_empty_file_list(self):
+        """Test embed function when no files are found"""
+        with patch('glob.glob', return_value=[]):
+            embed(method="char-split")
+            
+            
 class TestLoadFunction:
     @pytest.fixture
     def mock_chromadb_client(self):
@@ -261,36 +308,92 @@ class TestLoadFunction:
     @pytest.fixture
     def mock_glob(self):
         with patch('glob.glob') as mock:
-            mock.return_value = ['outputs/embeddings-char-split-Amsterdam.jsonl']
+            mock.return_value = ['outputs/embeddings-different-split-Amsterdam.jsonl']
             yield mock
 
     def test_load_success(self, mock_chromadb_client, mock_glob):
         """Test load function with successful connection"""
+        # Mock client
+        client = mock_chromadb_client.return_value
         with patch('pandas.read_json'):
             with patch('cli.load_text_embeddings') as mock_load:
                 load(method="char-split")
+                # Verify ChromaDB client interactions
+                mock_chromadb_client.assert_called_once()
+                client.delete_collection.assert_called_once_with(name="char-split-collection")
+                client.create_collection.assert_called_once_with(
+                name="char-split-collection", 
+                metadata={"hnsw:space": "cosine"}
+            )
+                # Verify file processing
+                mock_glob.assert_called_once()
+                mock_load.assert_called_once()
                 mock_load.assert_called_once()
 
-    def test_load_collection_exists(self, mock_chromadb_client, mock_glob):
+            
+
+    def test_load_collection_char_split(self, mock_chromadb_client, mock_glob):
         """Test load function when collection exists"""
         client = mock_chromadb_client.return_value
         client.delete_collection.side_effect = Exception()
         
         with patch('pandas.read_json'):
-            with patch('cli.load_text_embeddings'):
+            with patch('cli.load_text_embeddings') as mock_load:
                 load(method="char-split")
+                client.delete_collection.assert_called_once()
                 client.create_collection.assert_called_once()
+                mock_load.assert_called_once()
 
-    def test_load_no_files(self):
+    def test_load_collection_recursive_split(self, mock_chromadb_client, mock_glob):
+        """Test load function when collection exists"""
+        client = mock_chromadb_client.return_value
+        client.delete_collection.side_effect = Exception()
+        
+        with patch('pandas.read_json'):
+            with patch('cli.load_text_embeddings') as mock_load:
+                load(method="recursive-split")
+                client.delete_collection.assert_called_once()
+                client.create_collection.assert_called_once()
+                mock_load.assert_called_once()
+
+
+    def test_load_no_files_char_split(self, mock_chromadb_client):
         """Test load function with no files to process"""
+        client = mock_chromadb_client.return_value
         with patch('glob.glob') as mock_glob:
             mock_glob.return_value = []
-            with patch('chromadb.HttpClient'):
+            with patch('cli.load_text_embeddings') as mock_load:
                 load(method="char-split")
-                assert mock_glob.called
+
+                # Verify behavior when no files are found
+                mock_glob.assert_called_once()
+                client.create_collection.assert_called_once()
+                mock_load.assert_not_called()       
                 
-                
-                
+    def test_load_no_files_recursive_split(self, mock_chromadb_client):
+        """Test load function with no files to process"""
+        client = mock_chromadb_client.return_value
+        with patch('glob.glob') as mock_glob:
+            mock_glob.return_value = []
+            with patch('cli.load_text_embeddings') as mock_load:
+                load(method="recursive-split")
+
+                # Verify behavior when no files are found
+                mock_glob.assert_called_once()
+                client.create_collection.assert_called_once()
+                mock_load.assert_not_called()
+    
+    def test_load_pandas_error(self):
+        """Test load function checking reading error"""
+        with patch('pandas.read_json') as mock_df:
+            mock_df.side_effect = Exception("Failed to read JSONL")
+            with patch('cli.load_text_embeddings') as mock_load:
+                with pytest.raises(Exception):
+                    load(method="char-split")
+                # Should not be called
+                mock_load.assert_not_called()
+
+
 class TestQueryFunction:
     @pytest.fixture
     def mock_chromadb_client(self):
@@ -298,48 +401,132 @@ class TestQueryFunction:
             client = Mock()
             collection = Mock()
             collection.query.return_value = {
-                "documents": [["test document"]],
-                "metadatas": [{"city": "Beijing"}],
-                "distances": [0.1]
+                "ids": [["test_id1", "test_id2"]],
+                "distances": [[0.1, 0.3]],
+                "metadatas": [[{"city": "Beijing", "continent": "Asia", "country": "China"}, {"city": "Beijing", "continent": "Asia", "country": "China"}]],
+                "documents": [['test document1', 'test document2']] 
             }
-            client.get_collection.return_value = collection
             mock.return_value = client
+            client.get_collection.return_value = collection
             yield mock
 
-    def test_query_basic(self, mock_chromadb_client):
-        """Test basic query functionality"""
+
+    def test_query_char(self, mock_chromadb_client):
+        """Test query functionality for char split"""
         with patch('cli.generate_query_embedding') as mock_gen_embed:
             mock_gen_embed.return_value = [0.1] * 256
             query(method="char-split")
+
+            # Verify generate_query_embedding was called with correct structure
+            mock_gen_embed.assert_called_once()
+            assert isinstance(mock_gen_embed.call_args[0][0], str)
             
             # Verify query was called three times (basic, metadata filter, lexical search)
             collection = mock_chromadb_client.return_value.get_collection.return_value
             assert collection.query.call_count == 3
+            # Verify collection name 
+            collection_name = mock_chromadb_client.return_value.get_collection.call_args[1]
+            assert collection_name['name'] == "char-split-collection"
+            # Verify query call
+            calls = collection.query.call_args_list
+            assert calls[0][1]['n_results'] == 10
+            assert 'query_embeddings' in calls[0][1]
+            assert len(calls[0][1]['query_embeddings'][0]) == 256
+    
+    def test_query_recursive(self, mock_chromadb_client):
+        """Test query functionality for recursive split"""
+        with patch('cli.generate_query_embedding') as mock_gen_embed:
+            mock_gen_embed.return_value = [0.1] * 256
+            query(method="recursive-split")
 
-    def test_query_with_metadata_filter(self, mock_chromadb_client):
-        """Test query with metadata filter"""
+            # Verify generate_query_embedding was called with correct structure
+            mock_gen_embed.assert_called_once()
+            assert isinstance(mock_gen_embed.call_args[0][0], str)
+            
+            # Verify query was called three times (basic, metadata filter, lexical search)
+            collection = mock_chromadb_client.return_value.get_collection.return_value
+            assert collection.query.call_count == 3
+            # Verify collection name 
+            collection_name = mock_chromadb_client.return_value.get_collection.call_args[1]
+            assert collection_name['name'] == "recursive-split-collection"
+            # Verify query call
+            calls = collection.query.call_args_list
+            assert calls[0][1]['n_results'] == 10
+            assert 'query_embeddings' in calls[0][1]
+            assert len(calls[0][1]['query_embeddings'][0]) == 256
+
+
+    def test_query_with_metadata_char(self, mock_chromadb_client):
+        """Test query with metadata for char split"""
         with patch('cli.generate_query_embedding') as mock_gen_embed:
             mock_gen_embed.return_value = [0.1] * 256
             query(method="char-split")
+            # Verify generate_query_embedding was called with correct structure
+            mock_gen_embed.assert_called_once()
+            assert isinstance(mock_gen_embed.call_args[0][0], str)
             
             collection = mock_chromadb_client.return_value.get_collection.return_value
             calls = collection.query.call_args_list
             
             # Check the second call (metadata filter)
             assert calls[1][1]['where'] == {"city": "London"}
+            assert calls[1][1]['n_results'] == 10
+            assert len(calls[1][1]['query_embeddings'][0]) == 256
 
-    def test_query_with_lexical_search(self, mock_chromadb_client):
+
+    def test_query_with_metadata_recursive(self, mock_chromadb_client):
+        """Test query with metadata for recursive split"""
+        with patch('cli.generate_query_embedding') as mock_gen_embed:
+            mock_gen_embed.return_value = [0.1] * 256
+            query(method="recursive-split")
+            # Verify generate_query_embedding was called with correct structure
+            mock_gen_embed.assert_called_once()
+            assert isinstance(mock_gen_embed.call_args[0][0], str)
+            
+            collection = mock_chromadb_client.return_value.get_collection.return_value
+            calls = collection.query.call_args_list
+            
+            # Check the second call (metadata filter)
+            assert calls[1][1]['where'] == {"city": "London"}
+            assert calls[1][1]['n_results'] == 10
+            assert len(calls[1][1]['query_embeddings'][0]) == 256
+
+
+
+    def test_query_with_lexical_char(self, mock_chromadb_client):
         """Test query with lexical search"""
         with patch('cli.generate_query_embedding') as mock_gen_embed:
             mock_gen_embed.return_value = [0.1] * 256
             query(method="char-split")
+            # Verify generate_query_embedding was called with correct structure
+            mock_gen_embed.assert_called_once()
+            assert isinstance(mock_gen_embed.call_args[0][0], str)
             
             collection = mock_chromadb_client.return_value.get_collection.return_value
             calls = collection.query.call_args_list
             
             # Check the third call (lexical search)
-            assert calls[2][1]['where_document'] == {"$contains": "Italian"}                
+            assert calls[2][1]['where_document'] == {"$contains": "Italian"}  
+            assert calls[2][1]['n_results'] == 10
+            assert len(calls[2][1]['query_embeddings'][0]) == 256              
 
+    def test_query_with_lexical_recursive(self, mock_chromadb_client):
+        """Test query with lexical search"""
+        with patch('cli.generate_query_embedding') as mock_gen_embed:
+            mock_gen_embed.return_value = [0.1] * 256
+            query(method="char-split")
+            # Verify generate_query_embedding was called with correct structure
+            mock_gen_embed.assert_called_once()
+            assert isinstance(mock_gen_embed.call_args[0][0], str)
+            
+            collection = mock_chromadb_client.return_value.get_collection.return_value
+            calls = collection.query.call_args_list
+            
+            # Check the third call (lexical search)
+            assert calls[2][1]['where_document'] == {"$contains": "Italian"}   
+            assert calls[2][1]['n_results'] == 10
+            assert len(calls[2][1]['query_embeddings'][0]) == 256  
+  
 
 class TestChatFunction:
     @pytest.fixture
@@ -348,31 +535,92 @@ class TestChatFunction:
             client = Mock()
             collection = Mock()
             collection.query.return_value = {
-                "documents": [["test document"]],
-                "metadatas": [{"city": "Beijing"}],
-                "distances": [0.1]
+                "ids": [["test_id1", "test_id2"]],
+                "distances": [[0.1, 0.3]],
+                "metadatas": [[{"city": "Beijing", "continent": "Asia", "country": "China"}, {"city": "Beijing", "continent": "Asia", "country": "China"}]],
+                "documents": [['test document1', 'test document2']] 
             }
             client.get_collection.return_value = collection
             mock.return_value = client
             yield mock
 
-    def test_chat_basic(self, mock_chromadb_client):
-        """Test basic chat functionality"""
+    def test_chat_char_split(self, mock_chromadb_client):
+        """Test chat functionality using char_split"""
         with patch('cli.generate_query_embedding') as mock_gen_embed:
-            with patch('cli.generative_model.generate_content') as mock_generate:
+            with patch('cli.generative_model.generate_content') as generate_content:
                 mock_gen_embed.return_value = [0.1] * 256
                 mock_response = Mock()
-                mock_response.text = "Test response"
-                mock_generate.return_value = mock_response
+                mock_response.text = "Generated response about Beijing"
+                generate_content.return_value = mock_response
                 
                 chat(method="char-split")
-                
-                # Verify ChromaDB query was called
+
+                # Verify ChromaDB cliet initialization
+                mock_chromadb_client.assert_called_once()
+                 # Verify collection name
+                mock_chromadb_client.return_value.get_collection.assert_called_once_with(
+                    name="char-split-collection"
+                )
+                # Verify ChromaDB query parameters
                 collection = mock_chromadb_client.return_value.get_collection.return_value
-                collection.query.assert_called_once()
+                collection.query.assert_called_once_with(
+                    query_embeddings=[[0.1] * 256],
+                    n_results=10
+                )
+                # Verify query embedding generation
+                mock_gen_embed.assert_called_once()
+                # Verify generative model call
+                generate_content.assert_called_once()
+
+                # Get the actual input prompt that was passed to generate_content
+                called_args = generate_content.call_args[0][0]
+
+                # Verify that the input structure and content
+                assert isinstance(called_args, list)
+                assert len(called_args) == 1
+                input_args = called_args[0]
+                assert isinstance(input_args,str)
+                assert "test document1" in input_args
+                assert "test document2" in input_args
                 
-                # Verify generative model was called
-                mock_generate.assert_called_once()
+                
+
+    def test_chat_recursive_split(self, mock_chromadb_client):
+        """Test basic chat functionality using recursive_split"""
+        with patch('cli.generate_query_embedding') as mock_gen_embed:
+            with patch('cli.generative_model.generate_content') as generate_content:
+                mock_gen_embed.return_value = [0.1] * 256
+                chat(method="recursive-split")
+
+                # Verify ChromaDB cliet initialization
+                mock_chromadb_client.assert_called_once()
+                 # Verify collection name
+                mock_chromadb_client.return_value.get_collection.assert_called_once_with(
+                    name="recursive-split-collection"
+                )
+                # Verify ChromaDB query parameters
+                collection = mock_chromadb_client.return_value.get_collection.return_value
+                collection.query.assert_called_once_with(
+                    query_embeddings=[[0.1] * 256],
+                    n_results=10
+                )
+                # Verify query embedding generation
+                mock_gen_embed.assert_called_once()
+                # Verify generative model call
+                generate_content.assert_called_once()
+
+                # Get the actual input prompt that was passed to generate_content
+                called_args = generate_content.call_args[0][0]
+
+                # Verify that the input structure and content
+                assert isinstance(called_args, list)
+                assert len(called_args) == 1
+                input_args = called_args[0]
+                assert isinstance(input_args,str)
+                assert "test document1" in input_args
+                assert "test document2" in input_args
+
+
 
 class TestGetFunction:
     @pytest.fixture
@@ -380,14 +628,16 @@ class TestGetFunction:
         with patch('chromadb.HttpClient') as mock:
             client = Mock()
             collection = Mock()
-            collection.get.return_value = {
-                "documents": ["test document"],
-                "metadatas": [{"city": "London"}],
-                "ids": ["test-id"]
+            collection.query.return_value = {
+                "ids": [["test_id1", "test_id2"]],
+                "distances": [[0.1, 0.3]],
+                "metadatas": [[{"city": "Beijing", "continent": "Asia", "country": "China"}, {"city": "Beijing", "continent": "Asia", "country": "China"}]],
+                "documents": [['test document1', 'test document2']] 
             }
             client.get_collection.return_value = collection
             mock.return_value = client
             yield mock
+
 
     def test_get_documents(self, mock_chromadb_client):
         """Test getting documents from collection"""
@@ -398,3 +648,4 @@ class TestGetFunction:
             where={"city": "London"},
             limit=10
         )
+    
