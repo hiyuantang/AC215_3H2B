@@ -11,7 +11,7 @@ export PERSISTENT_DIR=$(pwd)/../persistent-folder/
 export IMAGE_NAME="llm-rag-cli"
 
 # Create the network if we don't have it yet
-docker network inspect llm-rag-network >/dev/null 2>&1 || docker network create llm-rag-network
+docker network inspect tripee-network >/dev/null 2>&1 || docker network create tripee-network
 
 # Build the image based on the Dockerfile
 docker build -t $IMAGE_NAME -f Dockerfile .

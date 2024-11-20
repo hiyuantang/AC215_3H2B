@@ -17,6 +17,8 @@ services:
             GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
             GCP_PROJECT: $GCP_PROJECT
             GCP_LOCATION: $GCP_LOCATION
+            CHROMADB_HOST: llm-rag-chromadb
+            CHROMADB_PORT: 8000
         depends_on:
             - chromadb
     chromadb:
