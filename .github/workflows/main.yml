@@ -16,12 +16,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: List root directories after checkout
-        run: |
-          pwd
-          ls -la
-          echo "Listing root directories after checkout" >> action_logs.txt
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
