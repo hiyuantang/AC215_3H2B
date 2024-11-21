@@ -31,11 +31,12 @@ jobs:
     - name: Run tests with coverage
       working-directory: src/api-service
       run: |
-        docker run --rm \
+        docker run -it --rm \
           -e GCP_PROJECT=TEST \
           -e CHROMADB_HOST=TEST \
           -e CHROMADB_PORT=8000 \
           -v ${{ github.workspace }}:/app \
+          --entrypoint /bin/bash \
           api-service \
           bash -c "cd /app && PYTHONPATH=/app pipenv install --dev && PYTHONPATH=/app pipenv run pytest tests/ -v --cov=. --cov-report=xml:/app/coverage.xml"
 
