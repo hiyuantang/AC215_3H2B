@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';
 import MapAndItineraryPage from '@/app/results/page';
 
@@ -42,12 +42,14 @@ global.fetch = jest.fn(() =>
 describe('Results Page', () => {
   const Wrapper = ({ children }) => <ChakraProvider>{children}</ChakraProvider>;
 
-  it('renders the page heading', () => {
-    render(
-      <Wrapper>
-        <MapAndItineraryPage />
-      </Wrapper>
-    );
+  it('renders the page heading', async () => {
+    await act(async () => {
+      render(
+        <Wrapper>
+          <MapAndItineraryPage />
+        </Wrapper>
+      );
+    });
 
     expect(
       screen.getByRole('heading', { name: /Your Trip Itinerary/i })
@@ -55,11 +57,13 @@ describe('Results Page', () => {
   });
 
   it('fetches and displays trip details', async () => {
-    render(
-      <Wrapper>
-        <MapAndItineraryPage />
-      </Wrapper>
-    );
+    await act(async () => {
+      render(
+        <Wrapper>
+          <MapAndItineraryPage />
+        </Wrapper>
+      );
+    });
 
     await waitFor(() => {
       expect(screen.getByText(/Westminster Abbey/i)).toBeInTheDocument();
@@ -67,11 +71,13 @@ describe('Results Page', () => {
   });
 
   it('renders map with markers and polylines after fetching data', async () => {
-    render(
-      <Wrapper>
-        <MapAndItineraryPage />
-      </Wrapper>
-    );
+    await act(async () => {
+      render(
+        <Wrapper>
+          <MapAndItineraryPage />
+        </Wrapper>
+      );
+    });
 
     await waitFor(() => {
       const markers = screen.getAllByText(/Mock Marker/i);
