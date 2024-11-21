@@ -61,7 +61,7 @@ export default function MapAndItineraryPage() {
                 const allCoordinates = Object.values(data.ordered_coordinates).flat();
                 setTripDetails(data);
                 setCenter(calculateCenter(allCoordinates));
-                setFinalMessage(data.final_iti || '');
+                setFinalMessage(data.final_itinerary || '');
             }
         }
         fetchData();
