@@ -56,13 +56,32 @@ collection_name = f"{method}-collection"
 collection = client.get_collection(name=collection_name)
 
 def _generate_query_embedding(query):
-	query_embedding_inputs = [TextEmbeddingInput(task_type='RETRIEVAL_DOCUMENT', text=query)]
-	kwargs = dict(output_dimensionality=EMBEDDING_DIMENSION) if EMBEDDING_DIMENSION else {}
-	embeddings = embedding_model.get_embeddings(query_embedding_inputs, **kwargs)
-	return embeddings[0].values
+    """
+    Generates an embedding for the given query using the specified embedding model.
+
+    Args:
+        query (str): The input text for which the embedding is to be generated.
+
+    Returns:
+        list: A list of embedding values for the input query.
+    """
+    query_embedding_inputs = [TextEmbeddingInput(task_type='RETRIEVAL_DOCUMENT', text=query)]
+    kwargs = dict(output_dimensionality=EMBEDDING_DIMENSION) if EMBEDDING_DIMENSION else {}
+    embeddings = embedding_model.get_embeddings(query_embedding_inputs, **kwargs)
+    return embeddings[0].values
 
 def generate_chat_response(title: str, ordered_locations: Dict, days_themes: Dict) -> str:
-    
+    """
+    Generates a detailed travel itinerary based on the provided title, ordered locations, and themes for each day.
+    Args:
+        title (str): The title of the travel itinerary.
+        ordered_locations (Dict): A dictionary where keys are days and values are lists of locations in order.
+        days_themes (Dict): A dictionary where keys are days and values are themes for each day.
+    Returns:
+        str: A detailed travel itinerary as a string.
+    Raises:
+        HTTPException: If there is an error generating the response.
+    """
     # Query construction
     query_list = []
     for day, theme in days_themes.items():

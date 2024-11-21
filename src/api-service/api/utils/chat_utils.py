@@ -5,12 +5,31 @@ import glob
 import traceback
         
 class ChatHistoryManager:
+    """
+    A class to manage chat history for a specific model.
+    Attributes:
+        model (str): The model name.
+        history_dir (str): The directory where chat histories are stored.
+    Methods:
+        __init__(model, history_dir="chat-history"):
+            Initializes the chat history manager with the specified directory.
+        _ensure_directories():
+            Ensures the chat history directory exists.
+        _get_chat_filepath(chat_id, session_id):
+            Gets the full file path for a chat JSON file.
+        save_chat(chat_to_save, session_id):
+            Saves a chat to both memory and file.
+        get_chat(chat_id, session_id):
+            Gets a specific chat by ID.
+        get_recent_chats(session_id, limit=None):
+            Gets recent chats, optionally limited to a specific number.
+    """
     def __init__(self, model, history_dir: str = "chat-history"):
         """Initialize the chat history manager with the specified directory"""
         self.model = model
         self.history_dir = os.path.join(history_dir, model)
         self._ensure_directories()
-    
+
     def _ensure_directories(self) -> None:
         """Ensure the chat history directory exists"""
         os.makedirs(self.history_dir, exist_ok=True)

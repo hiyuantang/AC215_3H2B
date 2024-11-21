@@ -8,7 +8,7 @@ from api.utils.input_base import UserInput
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 GCP_LOCATION = "us-central1"
-MODEL_ENDPOINT = "projects/184619367894/locations/us-central1/endpoints/7335221400405278720"
+MODEL_ENDPOINT = "projects/184619367894/locations/us-central1/endpoints/228541188414636032"
 
 # Configuration settings for the content generation
 generation_config = {
