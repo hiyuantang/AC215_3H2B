@@ -24,11 +24,20 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Build and run tests using script
-      working-directory: .
+    - name: Build Docker image
+      working-directory: src/api-service
+      run: docker build -t api-service .
+
+    - name: Run tests with coverage
+      working-directory: src/api-service
       run: |
-        chmod +x test-script.sh
-        ./test-script.sh
+        docker run --rm \
+          -e GCP_PROJECT=TEST \
+          -e CHROMADB_HOST=TEST \
+          -e CHROMADB_PORT=8000 \
+          -v ${{ github.workspace }}:/app \
+          api-service \
+          bash -c "cd /app && PYTHONPATH=/app pipenv install --dev && PYTHONPATH=/app pipenv run pytest tests/ -v --cov=. --cov-report=xml:/app/coverage.xml"
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v3
