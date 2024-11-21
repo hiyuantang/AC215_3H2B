@@ -27,6 +27,10 @@ jobs:
     - name: Build Docker image
       working-directory: src/api-service
       run: docker build -t api-service .
+    
+    - name: Inspect Docker image
+      run: |
+        docker run --rm api-service ls -l /app
 
     - name: Run tests with coverage
       working-directory: src/api-service
