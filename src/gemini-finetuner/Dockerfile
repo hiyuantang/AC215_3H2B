@@ -1,5 +1,5 @@
 # Use the official Debian-hosted Python image
-FROM python:3.9-slim-buster
+FROM python:3.10-slim-buster
 
 ARG DEBIAN_PACKAGES="build-essential git screen vim"
 
