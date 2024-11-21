@@ -1,0 +1,55 @@
+name: Build and Test API Service
+
+on:
+  push:
+    branches:
+      - main
+      - milestone4
+  pull_request:
+    branches:
+      - main
+      - milestone4
+
+jobs:
+  api-service:
+    name: Build and Test API Service
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python environment
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Build Docker image
+      working-directory: src/api-service
+      run: docker build -t api-service .
+    
+    - name: Inspect Docker image
+      run: |
+        docker run --rm \
+          -e GCP_PROJECT="ac215-3h2b-yuantang" \
+          -e CHROMADB_HOST="llm-rag-chromadb" \
+          -e CHROMADB_PORT=8000 \
+          api-service ls -l /app
+
+    - name: Run tests with coverage
+      working-directory: src/api-service
+      run: |
+        docker run --rm \
+          -e GCP_PROJECT="ac215-3h2b-yuantang" \
+          -e CHROMADB_HOST="llm-rag-chromadb" \
+          -e CHROMADB_PORT=8000 \
+          -v ${{ github.workspace }}:/app \
+          --entrypoint /bin/bash \
+          api-service \
+          bash -c "cd /app && PYTHONPATH=/app pipenv install --dev && PYTHONPATH=/app pipenv run pytest tests/ -v --cov=. --cov-report=xml:/app/coverage.xml"
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage.xml

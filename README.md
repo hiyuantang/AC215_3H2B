@@ -90,6 +90,8 @@ We built backend api service using fast API to expose model functionality to the
     │   ├── Pipfile.lock
     │   ├── agent_tools.py
     │   ├── cli.py
+    │	├── tests
+    │   │   └── *
     │   ├── docker-compose.yml
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
