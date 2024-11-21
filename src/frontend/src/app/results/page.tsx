@@ -1,8 +1,9 @@
 'use client';
 
 import {
-    Box, Heading, Text, VStack, Button
+    Box, Heading, Text, VStack, Button, List, ListItem
 } from "@chakra-ui/react";
+import ReactMarkdown from 'react-markdown';
 import { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Marker, Polyline } from "@react-google-maps/api";
 import { useRouter } from 'next/navigation';
@@ -110,8 +111,33 @@ export default function MapAndItineraryPage() {
             </Box>
             {finalMessage && (
                 <Box mt={6} p={4} bg="white" shadow="2xl" rounded="xl" textAlign="center">
-                    <Heading as="h2" size="lg" mb={4} color="orange.500">Final Itinerary Summary</Heading>
-                    <Text fontSize="md" color="gray.600">{finalMessage}</Text>
+                    <Heading as="h2" size="lg" mb={4} color="orange.500">Itinerary Summary</Heading>
+                    <ReactMarkdown
+                        components={{
+                            p: ({ node, ...props }) => (
+                                <Text
+                                    fontSize="md"
+                                    color="gray.600"
+                                    sx={{ whiteSpace: 'pre-line', textAlign: 'left' }}
+                                    {...props}
+                                />
+                            ),
+                            strong: ({ node, ...props }) => <Text as="span" fontWeight="bold" {...props} />,
+                            em: ({ node, ...props }) => <Text as="em" fontStyle="italic" {...props} />,
+                            h1: ({ node, ...props }) => <Heading as="h1" size="2xl" {...props} />,
+                            h2: ({ node, ...props }) => <Heading as="h2" size="xl" {...props} />,
+                            h3: ({ node, ...props }) => <Heading as="h3" size="lg" {...props} />,
+                            ul: ({ node, ordered, ...props }) => (
+                                <List styleType="disc" pl={4} textAlign="left" {...props} />
+                            ),
+                            ol: ({ node, ordered, ...props }) => (
+                                <List as="ol" styleType="decimal" pl={4} textAlign="left" {...props} />
+                            ),
+                            li: ({ node, ordered, ...props }) => <ListItem {...props} />,
+                        }}
+                    >
+                        {finalMessage}
+                    </ReactMarkdown>
                 </Box>
             )}
             <Button bgGradient="linear(to-r, orange.400, red.400)" color="white" size="lg" _hover={{ bgGradient: "linear(to-r, orange.500, red.500)" }} alignSelf="center" mt={4} onClick={() => router.push('/')}>
