@@ -11,18 +11,29 @@ import { useRouter } from 'next/navigation';
 export default function HomePage() {
     const router = useRouter();
     const toast = useToast();
+    const [city, setCity] = useState('');
+    const [tripType, setTripType] = useState('');
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        router.push('/results');
-        toast({
-            title: "Planning your trip now...",
-            status: "success",
-            duration: 3000,
-            isClosable: true
-        });
+
+        if (!city || !tripType || !startDate || !endDate) {
+            toast({
+                title: "Missing input fields!",
+                description: "Please fill in all the required fields.",
+                status: "error",
+                duration: 3000,
+                isClosable: true
+            });
+            return;
+        }
+
+        const days = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+        const month = startDate.toLocaleString('default', { month: 'long' });
+
+        router.push(`/results?city=${encodeURIComponent(city)}&days=${days}&type=${encodeURIComponent(tripType)}&month=${encodeURIComponent(month)}`);
     };
 
     return (
@@ -36,32 +47,26 @@ export default function HomePage() {
                 </Text>
                 <form onSubmit={handleSubmit}>
                     <VStack spacing={6} align="stretch">
-                        <FormControl id="city">
-                            <FormLabel fontWeight="bold" color="gray.600">
-                                Select City
-                            </FormLabel>
-                            <Select placeholder="Choose a city" borderColor="orange.400">
+                        <FormControl id="city" isRequired>
+                            <FormLabel fontWeight="bold" color="gray.600">Select City</FormLabel>
+                            <Select placeholder="Choose a city" borderColor="orange.400" onChange={(e) => setCity(e.target.value)}>
                                 <option value="london">London</option>
                                 <option value="manchester">Manchester</option>
                                 <option value="birmingham">Birmingham</option>
                                 <option value="edinburgh">Edinburgh</option>
                             </Select>
                         </FormControl>
-                        <FormControl id="trip-type">
-                            <FormLabel fontWeight="bold" color="gray.600">
-                                Type of Trip
-                            </FormLabel>
-                            <Select placeholder="Select trip type" borderColor="orange.400">
+                        <FormControl id="trip-type" isRequired>
+                            <FormLabel fontWeight="bold" color="gray.600">Type of Trip</FormLabel>
+                            <Select placeholder="Select trip type" borderColor="orange.400" onChange={(e) => setTripType(e.target.value)}>
                                 <option value="adventure">Adventure</option>
                                 <option value="beach">Beach</option>
                                 <option value="city">City</option>
                                 <option value="cultural">Cultural</option>
                             </Select>
                         </FormControl>
-                        <FormControl id="date">
-                            <FormLabel fontWeight="bold" color="gray.600">
-                                Select Travel Dates
-                            </FormLabel>
+                        <FormControl id="date" isRequired>
+                            <FormLabel fontWeight="bold" color="gray.600">Select Travel Dates</FormLabel>
                             <Box display="flex" justifyContent="space-between">
                                 <Box flex="1" mr="4">
                                     <DatePicker selected={startDate} onChange={date => setStartDate(date)} customInput={<Input borderColor="orange.400" />} placeholderText="Start date" />

@@ -7,7 +7,7 @@ Create a `.env.local` file in the root of the project and add the following envi
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=<API_KEY_HERE>
 ```
 
-### Running Locally
+## Running Locally
 ```bash
 npm install
 npm run dev

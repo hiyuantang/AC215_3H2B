@@ -1,0 +1,38 @@
+name: Build, Lint, and Test frontend
+
+on:
+  push:
+    branches:
+      - main
+      - milestone4
+  pull_request:
+    branches:
+      - main
+      - milestone4
+
+jobs:
+  frontend:
+    name: Build, Lint, and Test frontend
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Build docker image
+      working-directory: src/frontend
+      run: docker build -t frontend .
+
+    - name: Run ESLint
+      working-directory: src/frontend
+      run: docker run --rm frontend npm run lint
+
+    - name: Run tests with coverage
+      working-directory: src/frontend
+      run: docker run --rm -e NODE_ENV=development -v ${{ github.workspace }}/coverage:/app/coverage frontend npm run test
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage
