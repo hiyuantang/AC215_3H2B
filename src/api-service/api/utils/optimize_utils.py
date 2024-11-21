@@ -58,6 +58,7 @@ def _get_reranked_locations_perday(locations):
 def get_reranked_locations_all(iti_first_draft):
     # Access the second message in the messages list
     second_message = iti_first_draft["messages"][1]
+    city = iti_first_draft["messages"][0]["city"]
 
     # Retrieve the days_locations from the second message
     days_locations = second_message["days_locations"]
@@ -69,9 +70,11 @@ def get_reranked_locations_all(iti_first_draft):
     # Iterate over each day and its locations
     for day, locations in days_locations.items():
         # Get the ordered locations and coordinates for the day
+        locations = [loc+f",{city}" for loc in locations]
         result = _get_reranked_locations_perday(locations)
         if result:
             ordered_locs, ordered_coords = result
+            ordered_locs = [loc.replace(f",{city}", '') for loc in ordered_locs]
             # Store the results in the dictionaries
             ordered_locations[day] = ordered_locs
             ordered_coordinates[day] = ordered_coords
