@@ -26,23 +26,20 @@ generation_config = {
 # Initialize the GenerativeModel with specific system instructions
 SYSTEM_INSTRUCTION = """
 You are an AI assistant specialized in locations and attractions for tourism. 
-Your responses are based solely on the information provided in the text 
-chunks given to you. Do not use any external knowledge or make assumptions 
-beyond what is explicitly stated in these chunks.
+Your responses are based heavliy on the information provided in the text 
+chunks given to you. 
 
 When answering a query:
 1. Carefully read all the text chunks provided.
 2. Identify the most relevant information from these chunks to address the user's question.
-3. Formulate your response using only the information found in the given chunks.
-4. If the provided chunks do not contain sufficient information to answer the query, state that you don't have enough information to provide a complete answer.
+3. Formulate your response enhanced by the information found in the given chunks.
+4. If the provided chunks do not contain sufficient information to answer the query, use your own knowledge.
 5. Always maintain a professional and knowledgeable tone, befitting a travel and tourism agent.
 6. If there are contradictions in the provided chunks, mention this in your response and explain the different viewpoints presented.
 
 Remember:
-- You are an expert in tourist locations, but your knowledge is limited to the information in the provided chunks.
-- Do not invent information or draw from knowledge outside of the given text chunks.
+- You are an expert in tourist locations, but your knowledge is enhanced by the information in the provided chunks.
 - If asked about topics unrelated to traveling or tourist locations, politely redirect the conversation back to traveling-related subjects.
-- Be concise in your responses while ensuring you cover all relevant information from the chunks.
 
 Your goal is to provide accurate, helpful information about traveling and tourist locations 
 based heavily on the content of the text chunks you receive with each query.
@@ -67,45 +64,48 @@ def _generate_query_embedding(query):
 	embeddings = embedding_model.get_embeddings(query_embedding_inputs, **kwargs)
 	return embeddings[0].values
 
-def generate_chat_response(title: str, ordered_locations: Dict, ordered_coordinates: Dict) -> str:
-     title_enhance = title * 5
-     
-     query = '''I have this travel itinerary: 1-Day Solo Itinerary in Beijing for April\nDay 1: Journey 
-            Through Imperial Majesty\n- Forbidden City\n- Temple of Heaven\n- Summer Palace. 
-            Expand on how and why those locations are a good solo trip. 
-            At the start of the itinerary, give an interesting introduction to the destination regarding city's
-            hitory, culture, etc. For the main body of the answer, give me a more detailed traval itinerary without 
-            changing my plan, meaning no change of days and the locations in the original plan. At the end of the 
-            itinerary, give user tips specifically for this travel, considering about the month and its respective 
-            season.'''
-     
+def generate_chat_response(title: str, ordered_locations: Dict, days_themes: Dict) -> str:
+    
+    # Query construction
+    query_list = []
+    for day, theme in days_themes.items():
+        locations = ", ".join(ordered_locations[day])
+        query_list.append(f"Day {day}: {theme} (locations: {locations})")
+
+        query = ". ".join(query_list)
+    query = f"Travel Itinerary: {title}. "+ query
+    print(query)
+    
+    rag_query = query * 3
+
+    query = query + '''. Please create a more comprehensive itinerary based on the outline provided. Do not change the days, 
+    themes, or locations listed. Maintain the same order of activities and locations. Your task is to enhance the itinerary with 
+    detailed and descriptive information about each day while keeping the structure intact.
+    At the start of the itinerary, include an engaging introduction to Vienna, highlighting the city’s history, culture, and charm.
+    In the main body, provide a detailed travel itinerary for each day according to the themes and locations specified in 
+    the original plan. Avoid altering the days, themes, or location sequence. Do not arrange time, such as morning, afternoon, evening.
+    Each location should be separated as a bullet point. 
+    At the end of the itinerary, offer travel tips tailored to the season, specifically for February, 
+    ensuring visitors can make the most of their trip.'''
 
     try:
-        # Initialize parts list for the message
-        message_parts = []
+        # Create embeddings for the message content
+        query_embedding = _generate_query_embedding(rag_query)
+        # Retrieve chunks based on embedding value 
+        results = collection.query(
+            query_embeddings=[query_embedding],
+            n_results=5
+        )
+        INPUT_PROMPT = f"""
+        {query}
+        {"Additional information (Use information below to enhance itinerary descriptions for introduction, locations, and tips): "}
+        {results["documents"][0]}
+        """
 
-        # Add text content if present
-        if message.get("content"):
-            # Create embeddings for the message content
-            query_embedding = _generate_query_embedding(message["content"])
-            # Retrieve chunks based on embedding value 
-            results = collection.query(
-                query_embeddings=[query_embedding],
-                n_results=5
-            )
-            INPUT_PROMPT = f"""
-            {message["content"]}
-            {results["documents"][0]}
-            """
-            message_parts.append(INPUT_PROMPT)
-                    
-        
-        if not message_parts:
-            raise ValueError("Message must contain text content")
 
         # Send message with all parts to the model
         response = generative_model.generate_content(
-            [message_parts],  # Input prompt
+            [INPUT_PROMPT],  # Input prompt
             generation_config=generation_config,  # Configuration settings
             stream=False,  # Enable streaming for responses
         )

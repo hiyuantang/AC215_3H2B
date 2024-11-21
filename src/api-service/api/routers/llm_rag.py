@@ -48,26 +48,22 @@ async def post_plan(chat_id: str, x_session_id: str = Header(None, alias="X-Sess
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON format")
     
+    title = iti_reorder["title"]
+    ordered_locations = iti_reorder["messages"][2]["ordered_locations"]
+    days_themes = iti_reorder["messages"][1]["days_themes"]
+    
     # Generate response
-    assistant_response = generate_chat_response(chat_session, message)
+    final_iti = generate_chat_response(title, ordered_locations, days_themes)
+    final_iti = {"final_iti": final_iti}
+    iti_reorder['messages'].append(final_iti)
+
+    # Save the updated JSON back to the file
+    try:
+        with open(file_path, 'w') as file:
+            json.dump(iti_reorder, file, indent=2, ensure_ascii=False)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error saving file: {e}")
     
-    # Create chat response
-    title = message.get("content")
-    title = title[:50] + "..."
-    chat_response = {
-        "chat_id": chat_id,
-        "title": title,
-        "dts": current_time,
-        "messages": [
-            message,
-            {
-                "message_id": str(uuid.uuid4()),
-                "role": "assistant",
-                "content": assistant_response
-            }
-        ]
-    }
-    
-    # Save chat
-    chat_manager.save_chat(chat_response, x_session_id)
-    return chat_response
+    print(final_iti)
+
+    return final_iti
