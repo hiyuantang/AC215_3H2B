@@ -2,7 +2,6 @@ import os
 import json
 from fastapi import APIRouter, Header, HTTPException
 from typing import Optional
-import uuid
 from api.utils.llm_rag_utils import generate_chat_response
 from api.utils.chat_utils import ChatHistoryManager
 
