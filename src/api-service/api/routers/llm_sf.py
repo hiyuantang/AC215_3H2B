@@ -5,6 +5,8 @@ import time
 from api.utils.llm_utils import generate_chat_response, prepare_response
 from api.utils.chat_utils import ChatHistoryManager
 from api.utils.input_base import UserInput
+from api.routers.llm_rag import post_plan
+from api.routers.route_opt import post_coord_from_chat
 
 # Define Router
 router = APIRouter()
@@ -84,3 +86,33 @@ async def start_chat_with_llm(input_data: UserInput, x_session_id: str = Header(
     # Save chat
     chat_manager.save_chat(iti_first_draft, x_session_id)
     return iti_first_draft
+
+@router.post("/integrated-response")
+async def get_integrated_response(
+    user_input: UserInput, 
+    x_session_id: str = Header(None, alias="X-Session-ID")
+):
+    try:
+        chat_response = await start_chat_with_llm(user_input, x_session_id)
+        chat_id = chat_response["chat_id"]
+
+        loc_coord_response = await post_coord_from_chat(chat_id, x_session_id)
+        ordered_locations = loc_coord_response["ordered_locations"]
+        ordered_coordinates = loc_coord_response["ordered_coordinates"]
+
+        final_iti_response = await post_plan(chat_id, x_session_id)
+        final_itinerary = final_iti_response["final_iti"]
+
+        return {
+            "chat_id": chat_id,
+            "title": chat_response["title"],
+            "ordered_locations": ordered_locations,
+            "ordered_coordinates": ordered_coordinates,
+            "final_itinerary": final_itinerary,
+        }
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(f"Error in integrated response: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error processing the integrated response.")
