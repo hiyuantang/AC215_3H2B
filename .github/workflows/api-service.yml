@@ -30,12 +30,16 @@ jobs:
     
     - name: Inspect Docker image
       run: |
-        docker run --rm api-service ls -l /app
+        docker run --rm \
+          -e GCP_PROJECT=TEST \
+          -e CHROMADB_HOST=TEST \
+          -e CHROMADB_PORT=8000 \
+          api-service ls -l /app
 
     - name: Run tests with coverage
       working-directory: src/api-service
       run: |
-        docker run -it --rm \
+        docker run --rm \
           -e GCP_PROJECT=TEST \
           -e CHROMADB_HOST=TEST \
           -e CHROMADB_PORT=8000 \
