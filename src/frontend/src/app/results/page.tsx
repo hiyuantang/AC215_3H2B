@@ -114,7 +114,7 @@ export default function MapAndItineraryPage() {
                     <Heading as="h2" size="lg" mb={4} color="orange.500">Itinerary Summary</Heading>
                     <ReactMarkdown
                         components={{
-                            p: ({ node, ...props }) => (
+                            p: (props) => (
                                 <Text
                                     fontSize="md"
                                     color="gray.600"
@@ -122,18 +122,18 @@ export default function MapAndItineraryPage() {
                                     {...props}
                                 />
                             ),
-                            strong: ({ node, ...props }) => <Text as="span" fontWeight="bold" {...props} />,
-                            em: ({ node, ...props }) => <Text as="em" fontStyle="italic" {...props} />,
-                            h1: ({ node, ...props }) => <Heading as="h1" size="2xl" {...props} />,
-                            h2: ({ node, ...props }) => <Heading as="h2" size="xl" {...props} />,
-                            h3: ({ node, ...props }) => <Heading as="h3" size="lg" {...props} />,
-                            ul: ({ node, ordered, ...props }) => (
+                            strong: (props) => <Text as="span" fontWeight="bold" {...props} />,
+                            em: (props) => <Text as="em" fontStyle="italic" {...props} />,
+                            h1: (props) => <Heading as="h1" size="2xl" {...props} />,
+                            h2: (props) => <Heading as="h2" size="xl" {...props} />,
+                            h3: (props) => <Heading as="h3" size="lg" {...props} />,
+                            ul: (props) => (
                                 <List styleType="disc" pl={4} textAlign="left" {...props} />
                             ),
-                            ol: ({ node, ordered, ...props }) => (
+                            ol: (props) => (
                                 <List as="ol" styleType="decimal" pl={4} textAlign="left" {...props} />
                             ),
-                            li: ({ node, ordered, ...props }) => <ListItem {...props} />,
+                            li: (props) => <ListItem {...props} />,
                         }}
                     >
                         {finalMessage}

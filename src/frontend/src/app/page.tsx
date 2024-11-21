@@ -1,7 +1,7 @@
 'use client';
 
 import {
-    Box, Heading, Text, FormControl, FormLabel, Select, Button, VStack, Input, useToast
+    Box, Heading, Text, FormControl, FormLabel, Input, Button, VStack, useToast
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
@@ -48,22 +48,20 @@ export default function HomePage() {
                 <form onSubmit={handleSubmit}>
                     <VStack spacing={6} align="stretch">
                         <FormControl id="city" isRequired>
-                            <FormLabel fontWeight="bold" color="gray.600">Select City</FormLabel>
-                            <Select placeholder="Choose a city" borderColor="orange.400" onChange={(e) => setCity(e.target.value)}>
-                                <option value="london">London</option>
-                                <option value="manchester">Manchester</option>
-                                <option value="birmingham">Birmingham</option>
-                                <option value="edinburgh">Edinburgh</option>
-                            </Select>
+                            <FormLabel fontWeight="bold" color="gray.600">City</FormLabel>
+                            <Input
+                                placeholder="Enter city"
+                                borderColor="orange.400"
+                                onChange={(e) => setCity(e.target.value)}
+                            />
                         </FormControl>
                         <FormControl id="trip-type" isRequired>
                             <FormLabel fontWeight="bold" color="gray.600">Type of Trip</FormLabel>
-                            <Select placeholder="Select trip type" borderColor="orange.400" onChange={(e) => setTripType(e.target.value)}>
-                                <option value="adventure">Adventure</option>
-                                <option value="beach">Beach</option>
-                                <option value="city">City</option>
-                                <option value="cultural">Cultural</option>
-                            </Select>
+                            <Input
+                                placeholder="Enter trip type"
+                                borderColor="orange.400"
+                                onChange={(e) => setTripType(e.target.value)}
+                            />
                         </FormControl>
                         <FormControl id="date" isRequired>
                             <FormLabel fontWeight="bold" color="gray.600">Select Travel Dates</FormLabel>
