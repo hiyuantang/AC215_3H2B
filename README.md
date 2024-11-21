@@ -51,6 +51,8 @@
     │   ├── Pipfile.lock
     │   ├── agent_tools.py
     │   ├── cli.py
+    │	├── tests
+    │   │   └── *
     │   ├── docker-compose.yml
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
