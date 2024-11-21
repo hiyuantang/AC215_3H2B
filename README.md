@@ -1,12 +1,51 @@
-#### Project Milestone 3 Organization
+#### Project Tripee Milestone 4 Organization
 
-***Updates:***
+***Milestone 4 Updates:***
 
-***We have made significant changes to the `dataset-creator`, specifically modifying the system instructions for creating datasets. This includes changes to the system prompt in `cli.py` as well as alterations to the final dataset used for fine-tuning. Details of these changes can be seen in the examples provided in this README's `Strict Format Dataset` section. The question in the question-and-answer pairs now follows a consistent pattern, altering only the city, dates, and type information while maintaining a consistent style of requesting itinerary generation.***
+***1. We added API-service to control the data flow of the backend and made modifications to the frontend so that it is connected to the backend in a functional way. Additionally, we integrated pytest and continuous integration into our codebase.***
 
-***Additionally, we have introduced an extra step in the data versioning section of the README. This step involves utilizing git tag to manage versioning.***
+***2. For testing, we specifically tested the API-service, frontend, and RAG backend, focusing on components that do not require Google Cloud Platform authentication. The test coverage is close to 100/100.***
 
-***Changes made are highlighted in bold and italic.***
+- To run test for api-service locally: `cd src/api-service`, `sh test-shell.sh`.
+- To run test for frontend locally: (Brian).
+- To run test for llm-rag locally: `cd src/llm-rag`, `sh test-shell.sh`.
+
+***3. All Docker containers are now running on Python 3.10 for development environment consistency.***
+
+***4. Notes on Continuous Integration (Brian).***
+
+***5. How to run Tripee:***
+
+- Step 1: Build and Run RAG Backend: `cd src/llm-rag`, `sh docker-shell.sh`
+- Step 2: Build and Run api-service: `cd src/api-service`, `sh docker-shell.sh`. Inside api-server container: `uvicorn_server`
+- Step 3: Build and Run Frontend: `cd src/frontend`, `sh docker-shell.sh`. 
+- Note: For the API service, ensure that you have deployed the fine-tuned strict-format Gemini to the endpoint. Additionally, replace the endpoint ID in the `src/api-service/api/utils/llm_utils.py` file's MODEL_ENDPOINT variable. For the RAG backend setup, make sure you have performed a recursive split.
+- Once Tripee is running, you can access the API backend service in browser: `http://localhost:9000/docs`
+- Also, you can interate with Tripee via frontend UI: `http://localhost:3000`
+
+### Application Design
+
+Before we start implementing the app we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
+
+Here is our Solution Architecture:
+
+IMAGEIMAGEIMAGEIMAGEIMAGEIMAGEIMAGEIMAGEIMAGE
+
+### Technical Architecture
+
+### Backend API
+
+We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
+
+![API Backend](images/api-backend.png)
+
+### Frontend UI:
+
+***Enter required information in the Tripee Homepage:***
+![Frontend UI 0](images/frontend0.png)
+
+***Hit Plan My Trip. You will get a custom travel itinerary with Google Map visualization in 5-10 seconds***
+![Frontend UI 1](images/frontend1.png)
 
 ```
 ├── Readme.md
