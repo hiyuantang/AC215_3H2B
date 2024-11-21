@@ -4,7 +4,7 @@ from fastapi import HTTPException
 import traceback
 import chromadb
 from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
-from vertexai.generative_models import GenerativeModel, ChatSession
+from vertexai.generative_models import GenerativeModel
 
 
 # Setup
@@ -78,7 +78,8 @@ def generate_chat_response(title: str, ordered_locations: Dict, days_themes: Dic
     query = query + '''. Please create a more comprehensive itinerary based on the outline provided. Do not change the days, 
     themes, or locations listed. Maintain the same order of activities and locations. Your task is to enhance the itinerary with 
     detailed and descriptive information about each day while keeping the structure intact.
-    At the start of the itinerary, include an engaging introduction to Vienna, highlighting the city’s history, culture, and charm.
+    At the start of the itinerary, include an engaging introduction to the destination city, highlighting the city’s 
+    history, culture, and charm. 
     In the main body, provide a detailed travel itinerary for each day according to the themes and locations specified in 
     the original plan. Avoid altering the days, themes, or location sequence. Do not arrange time, such as morning, afternoon, evening.
     Each location should be separated as a bullet point. 
