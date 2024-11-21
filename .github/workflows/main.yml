@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "milestone4" ]
   workflow_dispatch:
 
 jobs:
