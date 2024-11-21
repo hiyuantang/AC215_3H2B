@@ -46,6 +46,7 @@ export default function MapAndItineraryPage() {
     const [finalMessage, setFinalMessage] = useState('');
     const [center, setCenter] = useState({ lat: 51.4993, lng: -0.1273 });
     const [sessionId] = useState(generateSessionId);
+    const [selectedDay, setSelectedDay] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
@@ -62,6 +63,7 @@ export default function MapAndItineraryPage() {
                 setTripDetails(data);
                 setCenter(calculateCenter(allCoordinates));
                 setFinalMessage(data.final_itinerary || '');
+                setSelectedDay(Object.keys(data.ordered_coordinates)[0]);
             }
         }
         fetchData();
@@ -76,29 +78,31 @@ export default function MapAndItineraryPage() {
                 <Box width="50%" bg="white" shadow="2xl" rounded="xl" p="6" mr="8" display="flex" justifyContent="center" alignItems="center" height="500px">
                     <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
                         <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12}>
-                            {Object.entries(tripDetails?.ordered_coordinates || {}).map(([day, coordinates]) =>
-                                coordinates.map((coord, index) => (
-                                    <Marker key={`${day}-${index}`} position={{ lat: coord[0], lng: coord[1] }} />
-                                ))
-                            )}
-                            {Object.entries(tripDetails?.ordered_coordinates || {}).map(([day, coordinates]) => (
-                                <Polyline key={day} path={coordinates.map(coord => ({ lat: coord[0], lng: coord[1] }))} options={{
+                            {selectedDay && tripDetails?.ordered_coordinates[selectedDay]?.map((coord, index) => (
+                                <Marker key={`${selectedDay}-${index}`} position={{ lat: coord[0], lng: coord[1] }} />
+                            ))}
+                            {selectedDay && (
+                                <Polyline path={tripDetails?.ordered_coordinates[selectedDay]?.map(coord => ({ lat: coord[0], lng: coord[1] }))} options={{
                                     strokeColor: '#FF8C00',
                                     strokeOpacity: 0.8,
                                     strokeWeight: 4
                                 }} />
-                            ))}
+                            )}
                         </GoogleMap>
                     </LoadScript>
                 </Box>
                 <Box width="35%" height="500px" bg="white" shadow="2xl" rounded="xl" p="6" overflowY="auto">
                     <VStack spacing={6} align="stretch">
                         {Object.entries(tripDetails?.ordered_locations || {}).map(([day, locations]) => (
-                            <Box key={day} p={4} bg="gray.100" rounded="md">
+                            <Box key={day} p={4} bg={selectedDay === day ? "orange.100" : "gray.100"} rounded="md" onClick={() => setSelectedDay(day)} cursor="pointer">
                                 <Heading as="h3" size="lg" mb={3} color="orange.500">Day {day}</Heading>
-                                {locations.map((location, index) => (
-                                    <Text key={index} fontSize="md" fontWeight="bold">{location}</Text>
-                                ))}
+                                <ul>
+                                    {locations.map((location, index) => (
+                                        <li key={index}>
+                                            <Text fontSize="md" fontWeight="bold">{location}</Text>
+                                        </li>
+                                    ))}
+                                </ul>
                             </Box>
                         ))}
                     </VStack>
