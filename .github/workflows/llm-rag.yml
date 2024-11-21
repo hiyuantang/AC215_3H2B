@@ -33,8 +33,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
           echo "Flake8 linting completed" >> action_logs.txt
 
-      - name: Conditional execution for automation branch or PRs to main
-        if: github.ref == 'refs/heads/automation' || (github.event.pull_request && contains(github.head_ref, 'automation'))
+      - name: Test Rag
         run: |
           cd src/llm-rag
           chmod +x ./test-shell.sh
