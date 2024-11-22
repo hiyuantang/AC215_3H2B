@@ -39,7 +39,7 @@ Here is a snapshot of we pass the workflow runs:
 
 - After careful consideration, we decided to move the route optimization component into the api-service for more convenient implementation. The reasoning is that our naive route optimization does not involve complex computations, so embedding it directly within the api-service expedites response times compared to hosting it as a standalone container, like the RAG backend, which would require additional container I/O. However, if the route optimization were to become more complex in the future, it would be more reasonable to invest extra time in developing it as a standalone microservice.
 
-### Application Design
+***7. Application Design***
 
 Before we start implementing the app we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
 
@@ -47,19 +47,19 @@ Here is our Solution Architecture:
 
 ![CI](images/solution-architecture.png)
 
-### Technical Architecture
+***8. Technical Architecture***
 
 Here is our Technical Architecture:
 
 ![CI](images/tech-architecture.png)
 
-### Backend API
+***9. Backend API***
 
 We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
 
 ![API Backend](images/api-backend.png)
 
-### Frontend UI:
+***10. Frontend UI:***
 
 ***Enter required information in the Tripee Homepage:***
 ![Frontend UI 0](images/frontend0.png)
@@ -68,10 +68,11 @@ We built backend api service using fast API to expose model functionality to the
 ![Frontend UI 1](images/frontend1.png)
 
 
-### Testing LLM-RAG
+***11. Testing and pytest***
 
-The test suite employs pytest fixtures and mocking to validate the RAG system. The tests cover the following components:
+The test suite employs pytest fixtures and mocking to validate python script. The tests cover the following components:
 
+LLM RAG Test:
 - Core Embedding Logic: Validates embedding generation, city mapping, and ChromaDB collection management with proper metadata structures.
 - Text Chunking: Tests multiple splitting methods (char-split, recursive-split, semantic-split) to ensure proper content segmentation and metadata preservation.
 - Embedding Generation Pipeline: Validates the process of converting chunks into proper embeddings, with appropriate batch processing and file I/O handling.
@@ -79,6 +80,12 @@ The test suite employs pytest fixtures and mocking to validate the RAG system. T
 - Query Processing: Validates semantic search capabilities across different splitting methods, including metadata filtering and lexical search, ensuring proper result structure and dimensionality.
 - Chat Functionality: Validates end-to-end conversation flow, from query embedding to response generation, with proper document retrieval and prompt construction across different splitting methods.
 Each component uses extensive mocking to isolate functionality and verify correct behavior under various scenarios.
+
+API Service Test:
+
+- The API service test focuses on scripts and functions that do not involve GCP credential verification, meaning that some parts of the scripts are not tested. This is because the demo is written in a way that, upon importing the script, it immediately prompts for GCP credential verification. To bypass this verification process, we would risk introducing a significant number of errors due to modifications to the logical structure of the codebase. That said, unit tests are conducted, while integration and system tests are compromised.
+
+Frontend Test:
 
 ## Structure
 ```
