@@ -9,6 +9,7 @@ from langchain_community.utils.math import (
     cosine_similarity,
 )
 from langchain_core.documents import BaseDocumentTransformer, Document
+
 # from langchain_core.embeddings import Embeddings
 
 
@@ -116,7 +117,7 @@ class SemanticChunker(BaseDocumentTransformer):
         breakpoint_threshold_amount: Optional[float] = None,
         number_of_chunks: Optional[int] = None,
         sentence_split_regex: str = r"(?<=[.?!])\s+",
-        embedding_function = None,
+        embedding_function=None,
     ):
         self._add_start_index = add_start_index
         self.buffer_size = buffer_size
@@ -135,30 +136,40 @@ class SemanticChunker(BaseDocumentTransformer):
         self, distances: List[float]
     ) -> Tuple[float, List[float]]:
         if self.breakpoint_threshold_type == "percentile":
-            return cast(
-                float,
-                np.percentile(distances, self.breakpoint_threshold_amount),
-            ), distances
+            return (
+                cast(
+                    float,
+                    np.percentile(distances, self.breakpoint_threshold_amount),
+                ),
+                distances,
+            )
         elif self.breakpoint_threshold_type == "standard_deviation":
-            return cast(
-                float,
-                np.mean(distances)
-                + self.breakpoint_threshold_amount * np.std(distances),
-            ), distances
+            return (
+                cast(
+                    float,
+                    np.mean(distances)
+                    + self.breakpoint_threshold_amount * np.std(distances),
+                ),
+                distances,
+            )
         elif self.breakpoint_threshold_type == "interquartile":
             q1, q3 = np.percentile(distances, [25, 75])
             iqr = q3 - q1
 
-            return np.mean(
-                distances
-            ) + self.breakpoint_threshold_amount * iqr, distances
+            return (
+                np.mean(distances) + self.breakpoint_threshold_amount * iqr,
+                distances,
+            )
         elif self.breakpoint_threshold_type == "gradient":
             # Calculate the threshold based on the distribution of gradient of distance array. # noqa: E501
             distance_gradient = np.gradient(distances, range(0, len(distances)))
-            return cast(
-                float,
-                np.percentile(distance_gradient, self.breakpoint_threshold_amount),
-            ), distance_gradient
+            return (
+                cast(
+                    float,
+                    np.percentile(distance_gradient, self.breakpoint_threshold_amount),
+                ),
+                distance_gradient,
+            )
         else:
             raise ValueError(
                 f"Got unexpected `breakpoint_threshold_type`: "
@@ -188,7 +199,6 @@ class SemanticChunker(BaseDocumentTransformer):
         y = min(max(y, 0), 100)
 
         return cast(float, np.percentile(distances, y))
-    
 
     def _calculate_sentence_distances(
         self, single_sentences_list: List[str]
@@ -199,11 +209,13 @@ class SemanticChunker(BaseDocumentTransformer):
             {"sentence": x, "index": i} for i, x in enumerate(single_sentences_list)
         ]
         sentences = combine_sentences(_sentences, self.buffer_size)
-        #print(sentences)
+        # print(sentences)
         # embeddings = self.embeddings.embed_documents(
         #     [x["combined_sentence"] for x in sentences]
         # )
-        embeddings = self.embedding_function([x["combined_sentence"] for x in sentences],batch_size=50)
+        embeddings = self.embedding_function(
+            [x["combined_sentence"] for x in sentences], batch_size=50
+        )
         for i, sentence in enumerate(sentences):
             sentence["combined_sentence_embedding"] = embeddings[i]
 
