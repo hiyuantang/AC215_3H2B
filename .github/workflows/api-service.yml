@@ -1,4 +1,4 @@
-name: Build and Test API Service
+name: Build, Lint, and Test API Service
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   api-service:
-    name: Build and Test API Service
+    name: Build, Lint, and Test API Service
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +22,19 @@ jobs:
     - name: Build Docker image
       working-directory: src/api-service
       run: docker build --no-cache -t api-service .
+    
+    - name: Run Linting
+      working-directory: src/api-service
+      run: |
+        docker run --rm \
+          -e GCP_PROJECT="ac215-3h2b-yuantang" \
+          -e CHROMADB_HOST="llm-rag-chromadb" \
+          -e CHROMADB_PORT=8000 \
+          -v ${{ github.workspace }}:/app \
+          --user root \
+          --entrypoint /bin/bash \
+          api-service \
+          -c "cd /app/src/api-service && PYTHONPATH=/app/src/api-service pipenv --python 3.10 install --dev && PYTHONPATH=/app/src/api-service pipenv run flake8 --config=flake8.ini ."
 
     - name: Run tests with coverage
       working-directory: src/api-service

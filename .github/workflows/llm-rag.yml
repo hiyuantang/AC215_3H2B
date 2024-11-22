@@ -1,4 +1,4 @@
-name: Build and Test LLM-RAG Service
+name: Build, Lint, and Test LLM-RAG Service
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   llm-rag:
-    name: Build and Test LLM-RAG Service
+    name: Build, Lint, and Test LLM-RAG Service
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +22,16 @@ jobs:
     - name: Build Docker image
       working-directory: src/llm-rag
       run: docker build --no-cache -t llm-rag .
+    
+    - name: Run linting
+      working-directory: src/llm-rag
+      run: |
+        docker run --rm \
+          -v ${{ github.workspace }}:/app \
+          --user root \
+          --entrypoint /bin/bash \
+          llm-rag \
+          -c "cd /app/src/llm-rag && PYTHONPATH=/app/src/llm-rag pipenv --python 3.10 install --dev && PYTHONPATH=/app/src/llm-rag pipenv run flake8 --config=flake8.ini ."
 
     - name: Run tests with coverage
       working-directory: src/llm-rag
