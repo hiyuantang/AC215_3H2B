@@ -11,11 +11,17 @@
 - To run test for llm-rag locally: `cd src/llm-rag`, `sh test-shell.sh`.
 - We have linter and test incoporated as part of Continuous Integration. To see test html result, go to action (https://github.com/hiyuantang/AC215_3H2B/actions), you can choose from `Build, Lint, and Test API Service`, `Build, Lint, and Test frontend`, `Build, Lint, and Test LLM-RAG Service` on the left side bar. Once you are in one of the workflow, click on latest workflow run, you can download the `coverage-report-html` at the page bottom. 
 
+Here is a snapeshot of test coverage for API Service: 
+
 ![Test cov](images/test-cov-html.png)
 
 ***3. All Docker containers, except frontend, are now running on Python 3.10 for development environment consistency. For llm-rag, we remove the agent related functions that we did not use in the project.***
 
-***4. Notes on Continuous Integration (Brian).***
+***4. Notes on Continuous Integration***
+
+Our GitHub Action workflow automates the process of building, linting, testing, and uploading test coverage reports for API service, frontend, and RAG backend. It runs on main and milestone4 branches and performs steps including building Docker images, running linting checks, executing tests with coverage, and uploading the HTML test coverage report as an artifact.
+
+Here is a snapshot of we pass the workflow runs: 
 
 ![CI](images/ci-snapshot.png)
 
@@ -29,6 +35,10 @@
 - Once Tripee is running, you can access the API backend service in browser: `http://localhost:9000/docs`
 - Also, you can interate with Tripee via frontend UI: `http://localhost:3000`
 
+***6. Other Modifications:***
+
+- After careful consideration, we decided to move the route optimization component into the api-service for more convenient implementation. The reasoning is that our naive route optimization does not involve complex computations, so embedding it directly within the api-service expedites response times compared to hosting it as a standalone container, like the RAG backend, which would require additional container I/O. However, if the route optimization were to become more complex in the future, it would be more reasonable to invest extra time in developing it as a standalone microservice.
+
 ### Application Design
 
 Before we start implementing the app we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
@@ -38,6 +48,8 @@ Here is our Solution Architecture:
 ![CI](images/solution-architecture.png)
 
 ### Technical Architecture
+
+Here is our Technical Architecture:
 
 ![CI](images/tech-architecture.png)
 
