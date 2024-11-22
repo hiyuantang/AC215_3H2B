@@ -39,6 +39,8 @@ Here is our Solution Architecture:
 
 ### Technical Architecture
 
+![CI](images/tech-architecture.png)
+
 ### Backend API
 
 We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
