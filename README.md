@@ -7,7 +7,7 @@
 ***2. For testing, we specifically tested the API-service, frontend, and RAG backend, focusing on components that do not require Google Cloud Platform authentication. The test coverage is close to 100/100.***
 
 - To run test for api-service locally: `cd src/api-service`, `sh test-shell.sh`.
-- To run test for frontend locally: (Brian).
+- To run test for frontend locally: `cd src/frontend`, `sh test-shell.sh`.
 - To run test for llm-rag locally: `cd src/llm-rag`, `sh test-shell.sh`.
 - We have linter and test incoporated as part of Continuous Integration. To see test html result, go to action (https://github.com/hiyuantang/AC215_3H2B/actions), you can choose from `Build, Lint, and Test API Service`, `Build, Lint, and Test frontend`, `Build, Lint, and Test LLM-RAG Service` on the left side bar. Once you are in one of the workflow, click on latest workflow run, you can download the `coverage-report-html` at the page bottom. 
 
@@ -68,7 +68,7 @@ We built backend api service using fast API to expose model functionality to the
 ![Frontend UI 1](images/frontend1.png)
 
 
-***11. Testing and pytest***
+***11. Backend Tests***
 
 The test suite employs pytest fixtures and mocking to validate python script. The tests cover the following components:
 
@@ -85,7 +85,15 @@ API Service Test:
 
 - The API service test focuses on scripts and functions that do not involve GCP credential verification, meaning that some parts of the scripts are not tested. This is because the demo is written in a way that, upon importing the script, it immediately prompts for GCP credential verification. To bypass this verification process, we would risk introducing a significant number of errors due to modifications to the logical structure of the codebase. That said, unit tests are conducted, while integration and system tests are compromised.
 
-Frontend Test:
+
+***12. Frontend Tests***
+The test suite utilizes Jest and React Testing Library to validate the core functionalities. The tests encompass the following components:
+
+- Home Page Rendering: Verifies that the main heading and description are correctly displayed
+- Form Inputs and Validation: Tests the presence and functionality of form inputs for "City," "Type of Trip," "Start date," and "End date." Ensures that the form does not submit and navigate to the results page when required fields are missing
+- Navigation Workflow: Confirms that submitting the form with all required fields correctly navigates the user to the results page with appropriate query parameters reflecting the user's input
+- Results Page Data Fetching: Validates that the results page successfully fetches and displays trip details including the itinerary and location information
+- Map Integration and Rendering: Checks that the map component renders correctly with markers and polylines after data fetching. This verifies the integration with the Google Maps API and the visual representation of the trip itinerary.
 
 ## Structure
 ```
