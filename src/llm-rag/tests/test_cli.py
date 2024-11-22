@@ -33,6 +33,19 @@ from cli import (  # noqa: E402
 
 # Validate embedding process
 class TestEmbeddings:
+    """
+    Test suite for embedding-related functionalities.
+
+    This test suite includes the following tests:
+    - `test_city_mappings_content`: Verifies that the `city_mappings` dictionary contains correct data for Amsterdam.
+    - `test_generate_query_embedding_construction`: Tests if the query embedding is constructed with the correct parameters.
+    - `test_generate_text_embeddings_batch_processing`: Tests the batching operation of the `generate_text_embeddings` function.
+    - `test_load_text_embeddings`: Tests the `load_text_embeddings` function to ensure it correctly loads embeddings into a mock ChromaDB collection.
+
+    Fixtures:
+    - `sample_dataframe`: Creates a sample testing DataFrame.
+    - `mock_collection`: Creates a mock ChromaDB collection.
+    """
 
     @pytest.fixture
     def sample_dataframe(self):
@@ -128,6 +141,26 @@ class TestEmbeddings:
 
 # Validate chunking process
 class TestChunkFunction:
+    """
+    TestChunkFunction is a test suite for verifying the functionality of the chunk function with different splitting methods.
+
+    Methods
+    -------
+    mock_file_content():
+        A pytest fixture that returns mock content for a file.
+
+    mock_glob():
+        A pytest fixture that mocks the glob.glob function to return a predefined file path.
+
+    test_chunk_char_split(mock_glob, mock_file_content):
+        Tests the chunk function using the 'char-split' method. Verifies that the output directory is created and the chunks are correctly formatted.
+
+    test_chunk_recursive_split(mock_glob, mock_file_content):
+        Tests the chunk function using the 'recursive-split' method. Verifies that the output directory is created and the chunks are correctly formatted.
+
+    test_chunk_semantic_split(mock_glob, mock_file_content):
+        Tests the chunk function using the 'semantic-split' method. Verifies that the output directory is created and the chunks are correctly formatted.
+    """
     @pytest.fixture
     def mock_file_content(self):
         return "This is a test content for the city of Amsterdam." * 10
@@ -215,6 +248,21 @@ class TestChunkFunction:
 
 # Validate embedding pipeline
 class TestEmbedFunction:
+    """
+    Test suite for the embed function in the CLI module.
+
+    Classes:
+        TestEmbedFunction: Contains tests for the embed function with different split methods.
+
+    Fixtures:
+        mock_jsonl_content: Provides mock JSONL content for testing.
+        mock_glob: Mocks the glob.glob function to return a predefined file list.
+
+    Tests:
+        test_embed_char_split: Tests the embed function with the char-split method.
+        test_embed_semantic_split: Tests the embed function with the semantic-split method.
+        test_embed_with_empty_file_list: Tests the embed function when no files are found.
+    """
     @pytest.fixture
     def mock_jsonl_content(self):
         data = [
@@ -285,6 +333,21 @@ class TestEmbedFunction:
 
 # Validate loading pipeline
 class TestLoadFunction:
+    """
+    Test suite for the load function in the CLI module.
+
+    This test suite includes the following test cases:
+    - test_load_success: Test load function with successful connection.
+    - test_load_collection_char_split: Test load function when collection exists using char-split method.
+    - test_load_collection_recursive_split: Test load function when collection exists using recursive-split method.
+    - test_load_no_files_char_split: Test load function with no files to process using char-split method.
+    - test_load_no_files_recursive_split: Test load function with no files to process using recursive-split method.
+    - test_load_pandas_error: Test load function checking reading error from pandas.
+
+    Fixtures:
+    - mock_chromadb_client: Mock fixture for ChromaDB HttpClient.
+    - mock_glob: Mock fixture for glob.glob function.
+    """
     @pytest.fixture
     def mock_chromadb_client(self):
         with patch("chromadb.HttpClient") as mock:
@@ -383,6 +446,23 @@ class TestLoadFunction:
 
 # Validate querying pipeline
 class TestQueryFunction:
+    """
+    Test suite for the query functionality of the CLI.
+
+    This test suite includes the following test cases:
+    - `test_query_char`: Tests the query functionality for character split method.
+    - `test_query_recursive`: Tests the query functionality for recursive split method.
+    - `test_query_with_metadata_char`: Tests the query functionality with metadata filter for character split method.
+    - `test_query_with_metadata_recursive`: Tests the query functionality with metadata filter for recursive split method.
+    - `test_query_with_lexical_char`: Tests the query functionality with lexical search for character split method.
+    - `test_query_with_lexical_recursive`: Tests the query functionality with lexical search for recursive split method.
+
+    Each test case uses a mock `chromadb.HttpClient` to simulate the behavior of the ChromaDB client and verifies the following:
+    - The `generate_query_embedding` function is called with the correct structure.
+    - The query is called three times (basic, metadata filter, lexical search).
+    - The collection name is correct.
+    - The query parameters (e.g., `n_results`, `query_embeddings`, `where`, `where_document`) are correct.
+    """
     @pytest.fixture
     def mock_chromadb_client(self):
         with patch("chromadb.HttpClient") as mock:
@@ -524,6 +604,36 @@ class TestQueryFunction:
 
 # Validate chat pipeline
 class TestChatFunction:
+    """
+    Test suite for chat functionality using different splitting methods.
+
+    Classes:
+        TestChatFunction: Contains tests for chat functionality using different splitting methods.
+
+    Fixtures:
+        mock_chromadb_client: Mocks the ChromaDB client and its methods.
+
+    Methods:
+        test_chat_char_split(mock_chromadb_client):
+            Tests the chat functionality using the 'char-split' method.
+            Verifies:
+                - ChromaDB client initialization
+                - Collection name
+                - ChromaDB query parameters
+                - Query embedding generation
+                - Generative model call
+                - Input structure and content passed to the generative model
+
+        test_chat_recursive_split(mock_chromadb_client):
+            Tests the chat functionality using the 'recursive-split' method.
+            Verifies:
+                - ChromaDB client initialization
+                - Collection name
+                - ChromaDB query parameters
+                - Query embedding generation
+                - Generative model call
+                - Input structure and content passed to the generative model
+    """
     @pytest.fixture
     def mock_chromadb_client(self):
         with patch("chromadb.HttpClient") as mock:
