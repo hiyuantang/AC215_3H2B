@@ -2,8 +2,17 @@
 
 import copy
 import re
-from typing import Any, Dict, Iterable, List, Literal, Optional, Sequence, Tuple, cast
-
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    Tuple,
+    cast,
+)
 import numpy as np
 from langchain_community.utils.math import (
     cosine_similarity,
@@ -13,7 +22,10 @@ from langchain_core.documents import BaseDocumentTransformer, Document
 # from langchain_core.embeddings import Embeddings
 
 
-def combine_sentences(sentences: List[dict], buffer_size: int = 1) -> List[dict]:
+def combine_sentences(
+    sentences: List[dict],
+    buffer_size: int = 1,
+) -> List[dict]:
     """Combine sentences based on buffer size.
 
     Args:
@@ -54,7 +66,9 @@ def combine_sentences(sentences: List[dict], buffer_size: int = 1) -> List[dict]
     return sentences
 
 
-def calculate_cosine_distances(sentences: List[dict]) -> Tuple[List[float], List[dict]]:
+def calculate_cosine_distances(
+    sentences: List[dict],
+) -> Tuple[List[float], List[dict]]:
     """Calculate cosine distances between sentences.
 
     Args:
@@ -69,7 +83,9 @@ def calculate_cosine_distances(sentences: List[dict]) -> Tuple[List[float], List
         embedding_next = sentences[i + 1]["combined_sentence_embedding"]
 
         # Calculate cosine similarity
-        similarity = cosine_similarity([embedding_current], [embedding_next])[0][0]
+        similarity = cosine_similarity(
+         [embedding_current],
+         [embedding_next])[0][0]
 
         # Convert to cosine distance
         distance = 1 - similarity
@@ -162,6 +178,7 @@ class SemanticChunker(BaseDocumentTransformer):
             )
         elif self.breakpoint_threshold_type == "gradient":
             # Calculate the threshold based on the distribution of gradient of distance array. # noqa: E501
+<<<<<<< Updated upstream
             distance_gradient = np.gradient(distances, range(0, len(distances)))
             return (
                 cast(
@@ -170,6 +187,16 @@ class SemanticChunker(BaseDocumentTransformer):
                 ),
                 distance_gradient,
             )
+=======
+            distance_gradient = np.gradient(
+                                distances,
+                                range(0, len(distances)))
+            return cast(
+                float,
+                np.percentile(distance_gradient, 
+                              self.breakpoint_threshold_amount),
+            ), distance_gradient
+>>>>>>> Stashed changes
         else:
             raise ValueError(
                 f"Got unexpected `breakpoint_threshold_type`: "
@@ -199,23 +226,33 @@ class SemanticChunker(BaseDocumentTransformer):
         y = min(max(y, 0), 100)
 
         return cast(float, np.percentile(distances, y))
+<<<<<<< Updated upstream
 
+=======
+    
+>>>>>>> Stashed changes
     def _calculate_sentence_distances(
         self, single_sentences_list: List[str]
     ) -> Tuple[List[float], List[dict]]:
         """Split text into multiple components."""
 
         _sentences = [
-            {"sentence": x, "index": i} for i, x in enumerate(single_sentences_list)
-        ]
+                     {"sentence": x, "index": i}
+                     for i, x in enumerate(single_sentences_list)
+                     ]
         sentences = combine_sentences(_sentences, self.buffer_size)
         # print(sentences)
         # embeddings = self.embeddings.embed_documents(
         #     [x["combined_sentence"] for x in sentences]
         # )
         embeddings = self.embedding_function(
+<<<<<<< Updated upstream
             [x["combined_sentence"] for x in sentences], batch_size=50
         )
+=======
+                 [x["combined_sentence"] for x in sentences],
+                 batch_size=50)
+>>>>>>> Stashed changes
         for i, sentence in enumerate(sentences):
             sentence["combined_sentence_embedding"] = embeddings[i]
 
@@ -238,9 +275,11 @@ class SemanticChunker(BaseDocumentTransformer):
             and len(single_sentences_list) == 2
         ):
             return single_sentences_list
-        distances, sentences = self._calculate_sentence_distances(single_sentences_list)
+        distances, sentences = self._calculate_sentence_distances(
+               single_sentences_list)
         if self.number_of_chunks is not None:
-            breakpoint_distance_threshold = self._threshold_from_clusters(distances)
+            breakpoint_distance_threshold = self._threshold_from_clusters(
+                        distances)
             breakpoint_array = distances
         else:
             (
@@ -262,8 +301,9 @@ class SemanticChunker(BaseDocumentTransformer):
             # The end index is the current breakpoint
             end_index = index
 
-            # Slice the sentence_dicts from the current start index to the end index
-            group = sentences[start_index : end_index + 1]
+            # Slice the sentence_dicts from the 
+            # current start index to the end index
+            group = sentences[start_index: end_index + 1]
             combined_text = " ".join([d["sentence"] for d in group])
             chunks.append(combined_text)
 
@@ -272,7 +312,8 @@ class SemanticChunker(BaseDocumentTransformer):
 
         # The last group, if any sentences remain
         if start_index < len(sentences):
-            combined_text = " ".join([d["sentence"] for d in sentences[start_index:]])
+            combined_text = " ".join(
+                 [d["sentence"] for d in sentences[start_index:]])
             chunks.append(combined_text)
         return chunks
 
