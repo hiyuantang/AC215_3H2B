@@ -348,31 +348,30 @@ def load(method="char-split"):
         load_text_embeddings(data_df, collection)
 
 
-def query(method="char-split"):
+def query(method="char-split", query=None):
     print("load()")
-
     # Connect to chroma DB
     client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
-
     # Get a collection object from an existing collection, by name. 
     # If it doesn't exist, create it.
     collection_name = f"{method}-collection"
-
-    query = '''I have this travel itinerary: 1-Day Solo Itinerary in 
-    Beijing for April\nDay 1: Journey 
-    Through Imperial Majesty\n
-    - Forbidden City\n- Temple of Heaven\n- Summer Palace. 
-    Expand on how and why those locations are a good solo trip. 
-    At the start of the itinerary, give an interesting introduction 
-    to the destination regarding city's
-    hitory, culture, etc. For the main body of the answer, 
-    give me a more detailed traval itinerary without 
-    changing my plan, meaning no change of days and the 
-    locations in the original plan. At the end of the 
-    itinerary, give user tips specifically for this travel, 
-    considering about the month and its respective 
-    season. '''
-    query_embedding = generate_query_embedding(query)
+    if query:
+        input_query = str(query)
+    else:
+        input_query = '''I have this travel itinerary: 1-Day Solo Itinerary in 
+        Beijing for April\nDay 1: Journey Through Imperial Majesty\n
+        - Forbidden City\n- Temple of Heaven\n- Summer Palace. Expand on 
+        how and why those locations are a good solo trip. 
+        At the start of the itinerary, give an interesting introduction 
+        to the destination regarding city's
+        hitory, culture, etc. For the main body of the answer, 
+        give me a more detailed traval itinerary without 
+        changing my plan, meaning no change of days and the 
+        locations in the original plan. At the end of the 
+        itinerary, give user tips specifically for this travel, 
+        considering about the month and its respective 
+        season. '''
+    query_embedding = generate_query_embedding(input_query)
     print("Embedding values:", query_embedding)
 
     # Get the collection
@@ -383,7 +382,7 @@ def query(method="char-split"):
         query_embeddings=[query_embedding],
         n_results=10
     )
-    print("Query:", query)
+    print("Query:", input_query)
     print("\n\nResults:", results)
 
     # 2: Query based on embedding value + metadata filter
@@ -392,7 +391,7 @@ def query(method="char-split"):
         n_results=10,
         where={"city": "London"}
     )
-    print("Query:", query)
+    print("Query:", input_query)
     print("\n\nResults:", results)
 
     # 3: Query based on embedding value + lexical search filter
@@ -402,11 +401,11 @@ def query(method="char-split"):
         n_results=10,
         where_document={"$contains": search_string}
     )
-    print("Query:", query)
+    print("Query:", input_query)
     print("\n\nResults:", results)
 
 
-def chat(method="char-split"):
+def chat(method="char-split", query=None):
     print("chat()")
 
     # Connect to chroma DB
@@ -415,21 +414,24 @@ def chat(method="char-split"):
     # If it doesn't exist, create it.
     collection_name = f"{method}-collection"
 
-    query = '''I have this travel itinerary: 1-Day Solo Itinerary 
-    in Beijing for April\nDay 1: Journey Through Imperial Majesty\n
-    - Forbidden City\n- Temple of Heaven\n- Summer Palace. 
-    Expand on how and why those locations are a good solo trip. 
-    At the start of the itinerary, give an interesting introduction 
-    to Beijing regarding Beijing's
-    hitory, culture, etc. For the main body of the answer, give me a 
-    more detailed traval itinerary without 
-    changing my plan, meaning no change of days and the locations 
-    in the original plan. At the end of the 
-    itinerary, give user tips specifically for this travel, 
-    considering about the month and its respective 
-    season.'''
-    query_embedding = generate_query_embedding(query)
-    print("Query:", query)
+    if query:
+        input_query = str(query)
+    else:
+        input_query = '''I have this travel itinerary: 1-Day Solo Itinerary 
+        in Beijing for April\nDay 1: Journey Through Imperial Majesty\n
+        - Forbidden City\n- Temple of Heaven\n- Summer Palace. 
+        Expand on how and why those locations are a good solo trip. 
+        At the start of the itinerary, give an interesting introduction 
+        to Beijing regarding Beijing's
+        hitory, culture, etc. For the main body of the answer, give me a 
+        more detailed traval itinerary without 
+        changing my plan, meaning no change of days and the locations 
+        in the original plan. At the end of the 
+        itinerary, give user tips specifically for this travel, 
+        considering about the month and its respective 
+        season.'''
+    query_embedding = generate_query_embedding(input_query)
+    print("Query:", input_query)
     print("Embedding values:", query_embedding)
     # Get the collection
     collection = client.get_collection(name=collection_name)
@@ -447,7 +449,7 @@ def chat(method="char-split"):
     {query}
     {document_writings}
     """.format(
-               query=query,
+               query=input_query,
                document_writings="\n".join(results["documents"][0])
     )
 
