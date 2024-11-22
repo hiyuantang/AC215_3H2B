@@ -1,13 +1,66 @@
-#### Project Milestone 3 Organization
+#### Project Tripee Milestone 4 Organization
 
-***Updates:***
+***Milestone 4 Updates:***
 
-***We have made significant changes to the `dataset-creator`, specifically modifying the system instructions for creating datasets. This includes changes to the system prompt in `cli.py` as well as alterations to the final dataset used for fine-tuning. Details of these changes can be seen in the examples provided in this README's `Strict Format Dataset` section. The question in the question-and-answer pairs now follows a consistent pattern, altering only the city, dates, and type information while maintaining a consistent style of requesting itinerary generation.***
+***1. We added API-service to control the data flow of the backend and made modifications to the frontend so that it is connected to the backend in a functional way. Additionally, we integrated pytest and continuous integration into our codebase.***
 
-***Additionally, we have introduced an extra step in the data versioning section of the README. This step involves utilizing git tag to manage versioning.***
+***2. For testing, we specifically tested the API-service, frontend, and RAG backend, focusing on components that do not require Google Cloud Platform authentication. The test coverage is close to 100/100.***
 
-***Changes made are highlighted in bold and italic.***
+- To run test for api-service locally: `cd src/api-service`, `sh test-shell.sh`.
+- To run test for frontend locally: (Brian).
+- To run test for llm-rag locally: `cd src/llm-rag`, `sh test-shell.sh`.
 
+***3. All Docker containers are now running on Python 3.10 for development environment consistency.***
+
+***4. Notes on Continuous Integration (Brian).***
+
+***5. How to run Tripee:***
+
+- Step 1: Build and Run RAG Backend: `cd src/llm-rag`, `sh docker-shell.sh`
+- Step 2: Build and Run api-service: `cd src/api-service`, `sh docker-shell.sh`. Inside api-server container: `uvicorn_server`
+- Step 3: Build and Run Frontend: `cd src/frontend`, `sh docker-shell.sh`. 
+- Note: For the API service, ensure that you have deployed the fine-tuned strict-format Gemini to the endpoint. Additionally, replace the endpoint ID in the `src/api-service/api/utils/llm_utils.py` file's MODEL_ENDPOINT variable. For the RAG backend setup, make sure you have performed a recursive split.
+- Once Tripee is running, you can access the API backend service in browser: `http://localhost:9000/docs`
+- Also, you can interate with Tripee via frontend UI: `http://localhost:3000`
+
+### Application Design
+
+Before we start implementing the app we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
+
+Here is our Solution Architecture:
+
+IMAGEIMAGEIMAGEIMAGEIMAGEIMAGEIMAGEIMAGEIMAGE
+
+### Technical Architecture
+
+### Backend API
+
+We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
+
+![API Backend](images/api-backend.png)
+
+### Frontend UI:
+
+***Enter required information in the Tripee Homepage:***
+![Frontend UI 0](images/frontend0.png)
+
+***Hit Plan My Trip. You will get a custom travel itinerary with Google Map visualization in 5-10 seconds***
+![Frontend UI 1](images/frontend1.png)
+
+
+### Testing LLM-RAG
+
+The test suite employs pytest fixtures and mocking to validate the RAG system. The tests cover the following components:
+
+- Core Embedding Logic: Validates embedding generation, city mapping, and ChromaDB collection management with proper metadata structures.
+- Text Chunking: Tests multiple splitting methods (char-split, recursive-split, semantic-split) to ensure proper content segmentation and metadata preservation.
+- Embedding Generation Pipeline: Validates the process of converting chunks into proper embeddings, with appropriate batch processing and file I/O handling.
+- ChromaDB Integration: Validates collection management including creation, deletion, and data loading, while handling various edge cases and maintaining data integrity.
+- Query Processing: Validates semantic search capabilities across different splitting methods, including metadata filtering and lexical search, ensuring proper result structure and dimensionality.
+- Chat Functionality: Validates end-to-end conversation flow, from query embedding to response generation, with proper document retrieval and prompt construction across different splitting methods.
+Each component uses extensive mocking to isolate functionality and verify correct behavior under various scenarios.
+
+## Structure
 ```
 ├── Readme.md
 ├── data
@@ -51,6 +104,8 @@
     │   ├── Pipfile.lock
     │   ├── agent_tools.py
     │   ├── cli.py
+    │	├── tests
+    │   │   └── *
     │   ├── docker-compose.yml
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
@@ -88,7 +143,7 @@
 
 ```
 
-### AC215 - Milestone 3 - Tripee: LLM-powered Trip Planner App ###
+### AC215 - Tripee: LLM-powered Trip Planner App ###
 
 **Team Members**
 
@@ -101,10 +156,6 @@ Yuan Tang, Brian Sutioso, Jiho Kil, Wenyu Yang
 **Project**
 
 In this project, we’re developing an LLM-powered travel planner application. The app will take user inputs, such as their travel destination (city), duration, dates or months, and type of trip. The LLM will then generate a carefully tailored and considerate travel itinerary based on these inputs. Additionally, a Google map will display the locations and routes for each day of the trip, providing users with visual reference. We’ll be using techniques like fine-tuning, RAG, and chain of thoughts to enhance the quality and consistency of the output. 
-
-### Milestone 3 ###
-
-In this milestone, we have the components for data versioning, data creation, LLM fine-tuning, and RAG. 
 
 ## Introduction to Datasets ##
 
@@ -183,7 +234,7 @@ The scraper starts by targeting the Wikipedia pages of the specified cities. It 
 
 ## Containers ##
 
-We offer two options for building and running containers for Milestone 3:
+We offer two options for building and running containers:
 - Build and run all containers at once. __(recommended)__
 - Build and run a single container or a set of containers that perform a single function.
 

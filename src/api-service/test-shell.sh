@@ -10,7 +10,7 @@ export CHROMADB_PORT=8000
 docker build -t api-service .
 
 # Run tests
-docker run -it --rm \
+docker run --rm \
     -e GCP_PROJECT=$GCP_PROJECT \
     -e CHROMADB_HOST=$CHROMADB_HOST \
     -e CHROMADB_PORT=$CHROMADB_PORT \

@@ -34,6 +34,7 @@ from cli import (  # noqa: E402
 )
 
 
+# Validate embedding process
 class TestEmbeddings:
 
     @pytest.fixture
@@ -128,6 +129,7 @@ class TestEmbeddings:
         all(len(id.split('-')[0]) == 16 for id in call_args['ids'])
 
 
+# Validate chunking process
 class TestChunkFunction:
     @pytest.fixture
     def mock_file_content(self):
@@ -212,8 +214,9 @@ class TestChunkFunction:
                     assert 'chunk' in text_dict
                     assert 'city' in text_dict
                     assert text_dict['city'] == 'Amsterdam'
-                    
 
+
+# Validate embedding pipeline
 class TestEmbedFunction:
     @pytest.fixture
     def mock_jsonl_content(self):
@@ -290,7 +293,8 @@ class TestEmbedFunction:
         with patch('glob.glob', return_value=[]):
             embed(method="char-split")
             
-            
+
+# Validate loading pipeline            
 class TestLoadFunction:
     @pytest.fixture
     def mock_chromadb_client(self):
@@ -390,6 +394,7 @@ class TestLoadFunction:
                 mock_load.assert_not_called()
 
 
+# Validate querying pipeline
 class TestQueryFunction:
     @pytest.fixture
     def mock_chromadb_client(self):
@@ -546,6 +551,7 @@ class TestQueryFunction:
             assert len(calls[2][1]['query_embeddings'][0]) == 256  
   
 
+# Validate chat pipeline
 class TestChatFunction:
     @pytest.fixture
     def mock_chromadb_client(self):
