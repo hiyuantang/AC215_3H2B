@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class UserInput(BaseModel):
     """
     UserInput is a Pydantic model that represents the input data for a user.
@@ -12,6 +13,7 @@ class UserInput(BaseModel):
         message_id (str, optional): The ID of the message, if any. Defaults to None.
         role (str, optional): The role associated with the user input, if any. Defaults to None.
     """
+
     city: str
     days: str
     type: str

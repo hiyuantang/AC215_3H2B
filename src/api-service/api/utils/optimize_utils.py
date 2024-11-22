@@ -1,6 +1,7 @@
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
-import random 
+import random
+
 
 def _get_lat_long(location_name):
     """
@@ -10,7 +11,7 @@ def _get_lat_long(location_name):
         location_name (str): The name of the location to geocode.
 
     Returns:
-        tuple: A tuple containing the latitude and longitude of the location if found, 
+        tuple: A tuple containing the latitude and longitude of the location if found,
                otherwise None if the location could not be found.
     """
     geolocator = Nominatim(user_agent="location-finder")
@@ -20,6 +21,7 @@ def _get_lat_long(location_name):
     else:
         print(f"Could not find coordinates for {location_name}")
         return None
+
 
 def _calculate_distance(coord1, coord2):
     """
@@ -34,13 +36,14 @@ def _calculate_distance(coord1, coord2):
     """
     return geodesic(coord1, coord2).kilometers
 
+
 # Greedy
 def _find_shortest_path(locations):
     """
     Finds the shortest path visiting all given locations using a greedy algorithm.
 
     This function takes a list of locations and returns a path that visits each location
-    exactly once, starting from a randomly chosen location and always moving to the 
+    exactly once, starting from a randomly chosen location and always moving to the
     nearest unvisited location.
 
     Args:
@@ -58,11 +61,14 @@ def _find_shortest_path(locations):
 
     while locations:
         last_location = path[-1]
-        next_location = min(locations, key=lambda loc: _calculate_distance(last_location, loc))
+        next_location = min(
+            locations, key=lambda loc: _calculate_distance(last_location, loc)
+        )
         path.append(next_location)
         locations.remove(next_location)
 
     return path
+
 
 def _get_reranked_locations_perday(locations):
     """
@@ -91,7 +97,7 @@ def _get_reranked_locations_perday(locations):
     if len(location_coords) < 2:
         print("Please provide at least two locations...")
         return
-    
+
     print("\nLocations ordered by the shortest distance:")
     locations_to_visit = [coord for _, coord in location_coords]
     ordered_coords = _find_shortest_path(locations_to_visit)
@@ -104,6 +110,7 @@ def _get_reranked_locations_perday(locations):
         ordered_coordinates.append(coord)
 
     return ordered_locations, ordered_coordinates
+
 
 def get_reranked_locations_all(iti_first_draft):
     """
@@ -137,15 +144,17 @@ def get_reranked_locations_all(iti_first_draft):
     # Iterate over each day and its locations
     for day, locations in days_locations.items():
         # Get the ordered locations and coordinates for the day
-        locations = [loc+f",{city}" for loc in locations]
+        locations = [loc + f",{city}" for loc in locations]
         result = _get_reranked_locations_perday(locations)
         if result:
             ordered_locs, ordered_coords = result
-            ordered_locs = [loc.replace(f",{city}", '') for loc in ordered_locs]
+            ordered_locs = [loc.replace(f",{city}", "") for loc in ordered_locs]
             # Store the results in the dictionaries
             ordered_locations[day] = ordered_locs
             ordered_coordinates[day] = ordered_coords
         else:
-            print(f"Unable to rerank locations for day {day} due to insufficient locations.")
+            print(
+                f"Unable to rerank locations for day {day} due to insufficient locations."
+            )
 
     return ordered_locations, ordered_coordinates

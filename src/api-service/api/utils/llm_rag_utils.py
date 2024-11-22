@@ -25,7 +25,7 @@ generation_config = {
 
 # Initialize the GenerativeModel with specific system instructions
 SYSTEM_INSTRUCTION = """
-You are an AI assistant specialized in locations and attractions for tourism. 
+You are an AI assistant specialized in locations and attractions for tourism.
 
 When answering a query:
 1. Carefully read all the text chunks provided.
@@ -38,12 +38,11 @@ Remember:
 - You are an expert in tourist locations, and your knowledge is enhanced by the information in the provided chunks.
 - If asked about topics unrelated to traveling or tourist locations, politely redirect the conversation back to traveling-related subjects.
 
-Your goal is to provide accurate, helpful information about traveling and tourist locations 
+Your goal is to provide accurate, helpful information about traveling and tourist locations
 helped by the content of the text chunks you receive with each query.
 """
 generative_model = GenerativeModel(
-	GENERATIVE_MODEL,
-	system_instruction=[SYSTEM_INSTRUCTION]
+    GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTION]
 )
 # https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api#python
 embedding_model = TextEmbeddingModel.from_pretrained(EMBEDDING_MODEL)
@@ -55,6 +54,7 @@ collection_name = f"{method}-collection"
 # Get the collection
 collection = client.get_collection(name=collection_name)
 
+
 def _generate_query_embedding(query):
     """
     Generates an embedding for the given query using the specified embedding model.
@@ -65,12 +65,19 @@ def _generate_query_embedding(query):
     Returns:
         list: A list of embedding values for the input query.
     """
-    query_embedding_inputs = [TextEmbeddingInput(task_type='RETRIEVAL_DOCUMENT', text=query)]
-    kwargs = dict(output_dimensionality=EMBEDDING_DIMENSION) if EMBEDDING_DIMENSION else {}
+    query_embedding_inputs = [
+        TextEmbeddingInput(task_type="RETRIEVAL_DOCUMENT", text=query)
+    ]
+    kwargs = (
+        dict(output_dimensionality=EMBEDDING_DIMENSION) if EMBEDDING_DIMENSION else {}
+    )
     embeddings = embedding_model.get_embeddings(query_embedding_inputs, **kwargs)
     return embeddings[0].values
 
-def generate_chat_response(title: str, ordered_locations: Dict, days_themes: Dict) -> str:
+
+def generate_chat_response(
+    title: str, ordered_locations: Dict, days_themes: Dict
+) -> str:
     """
     Generates a detailed travel itinerary based on the provided title, ordered locations, and themes for each day.
     Args:
@@ -89,36 +96,35 @@ def generate_chat_response(title: str, ordered_locations: Dict, days_themes: Dic
         query_list.append(f"Day {day}: {theme} (locations: {locations})")
 
         query = ". ".join(query_list)
-    query = f"Travel Itinerary: {title}. "+ query
+    query = f"Travel Itinerary: {title}. " + query
     print(query)
-    
+
     rag_query = query * 3
 
-    query = query + '''. Please create a more comprehensive itinerary based on the outline provided. Do not change the days, 
-    themes, or locations listed. Maintain the same order of activities and locations. Your task is to enhance the itinerary with 
+    query = (
+        query
+        + """. Please create a more comprehensive itinerary based on the outline provided. Do not change the days,
+    themes, or locations listed. Maintain the same order of activities and locations. Your task is to enhance the itinerary with
     detailed and descriptive information about each day while keeping the structure intact.
-    At the start of the itinerary, include an engaging introduction to the destination city, highlighting the city’s 
-    history, culture, and charm. 
-    In the main body, provide a detailed travel itinerary for each day according to the themes and locations specified in 
+    At the start of the itinerary, include an engaging introduction to the destination city, highlighting the city’s
+    history, culture, and charm.
+    In the main body, provide a detailed travel itinerary for each day according to the themes and locations specified in
     the original plan. Avoid altering the days, themes, or location sequence. Do not arrange time, such as morning, afternoon, evening.
-    Each location should be separated as a bullet point. 
-    At the end of the itinerary, offer travel tips tailored to the season, specifically for February, 
-    ensuring visitors can make the most of their trip.'''
+    Each location should be separated as a bullet point.
+    At the end of the itinerary, offer travel tips tailored to the season, specifically for February,
+    ensuring visitors can make the most of their trip."""
+    )
 
     try:
         # Create embeddings for the message content
         query_embedding = _generate_query_embedding(rag_query)
-        # Retrieve chunks based on embedding value 
-        results = collection.query(
-            query_embeddings=[query_embedding],
-            n_results=5
-        )
+        # Retrieve chunks based on embedding value
+        results = collection.query(query_embeddings=[query_embedding], n_results=5)
         INPUT_PROMPT = f"""
         {query}
         {"Additional information (Use information below to enhance itinerary descriptions for introduction, locations, and tips): "}
         {results["documents"][0]}
         """
-
 
         # Send message with all parts to the model
         response = generative_model.generate_content(
@@ -126,13 +132,12 @@ def generate_chat_response(title: str, ordered_locations: Dict, days_themes: Dic
             generation_config=generation_config,  # Configuration settings
             stream=False,  # Enable streaming for responses
         )
-        
+
         return response.text
-        
+
     except Exception as e:
         print(f"Error generating response: {str(e)}")
         traceback.print_exc()
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to generate response: {str(e)}"
+            status_code=500, detail=f"Failed to generate response: {str(e)}"
         )

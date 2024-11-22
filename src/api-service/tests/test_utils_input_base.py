@@ -1,5 +1,5 @@
-import pytest
 from api.utils.input_base import UserInput
+
 
 def test_valid_user_input():
     """Test creating a UserInput object with valid input."""
@@ -9,7 +9,7 @@ def test_valid_user_input():
         "type": "forecast",
         "month": "November",
         "message_id": "12345",
-        "role": "user"
+        "role": "user",
     }
     user_input = UserInput(**input_data)
 
@@ -28,7 +28,7 @@ def test_optional_fields():
         "city": "London",
         "days": "3",
         "type": "forecast",
-        "month": "December"
+        "month": "December",
     }
     user_input = UserInput(**input_data)
 

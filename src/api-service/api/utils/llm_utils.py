@@ -8,7 +8,9 @@ from api.utils.input_base import UserInput
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 GCP_LOCATION = "us-central1"
-MODEL_ENDPOINT = "projects/184619367894/locations/us-central1/endpoints/228541188414636032"
+MODEL_ENDPOINT = (
+    "projects/184619367894/locations/us-central1/endpoints/228541188414636032"
+)
 
 # Configuration settings for the content generation
 generation_config = {
@@ -19,15 +21,16 @@ generation_config = {
 
 generative_model = GenerativeModel(MODEL_ENDPOINT)
 
+
 def generate_chat_response(input_data: UserInput) -> str:
     """
     Generate a response using the chat session to maintain history.
     Handles both text and image inputs.
-    
+
     Args:
         chat_session: The Vertex AI chat session
         message: Dict containing 'content' (text) and optionally 'image' (base64 string)
-    
+
     Returns:
         str: The model's response
     """
@@ -45,21 +48,20 @@ def generate_chat_response(input_data: UserInput) -> str:
             generation_config=generation_config,  # Configuration settings
             stream=False,  # Enable streaming for responses
         )
-        
+
         return response.text
-        
+
     except Exception as e:
         print(f"Error generating response: {str(e)}")
         traceback.print_exc()
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to generate response: {str(e)}"
+            status_code=500, detail=f"Failed to generate response: {str(e)}"
         )
 
 
 def prepare_response(response_text):
     # Split the text into lines
-    lines = response_text.strip().split('\n')
+    lines = response_text.strip().split("\n")
 
     # The first line is assumed to be the title
     title = lines[0].strip()
@@ -71,7 +73,7 @@ def prepare_response(response_text):
     current_day = None
 
     # Compile a regex pattern to match 'Day x' where x is a number
-    day_pattern = re.compile(r'Day\s*(\d+):?', re.IGNORECASE)
+    day_pattern = re.compile(r"Day\s*(\d+):?", re.IGNORECASE)
 
     for line in lines[1:]:
         line = line.strip()
@@ -84,7 +86,7 @@ def prepare_response(response_text):
             # Initialize the list for this day's locations
             itinerary[current_day] = []
             # Extract any theme on the same line after 'Day x:'
-            day_line = line[day_match.end():].strip(':- ')
+            day_line = line[day_match.end() :].strip(":- ")
             if day_line:
                 themes[current_day] = day_line
             else:
@@ -94,7 +96,7 @@ def prepare_response(response_text):
             if current_day is None:
                 continue  # Skip lines before the first 'Day x'
             # Remove leading dashes or bullets and strip whitespace
-            location = line.lstrip('-•').strip()
+            location = line.lstrip("-•").strip()
             # Ignore empty lines
             if location:
                 itinerary[current_day].append(location)

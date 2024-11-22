@@ -14,14 +14,20 @@ router = APIRouter()
 # Initialize chat history manager and sessions
 chat_manager = ChatHistoryManager(model="tripee")
 
+
 @router.get("/chats")
-async def get_chats(x_session_id: str = Header(None, alias="X-Session-ID"), limit: Optional[int] = None):
+async def get_chats(
+    x_session_id: str = Header(None, alias="X-Session-ID"), limit: Optional[int] = None
+):
     """Get all chats, optionally limited to a specific number"""
     print("x_session_id:", x_session_id)
     return chat_manager.get_recent_chats(x_session_id, limit)
 
+
 @router.get("/chats/{chat_id}")
-async def get_chat(chat_id: str, x_session_id: str = Header(None, alias="X-Session-ID")):
+async def get_chat(
+    chat_id: str, x_session_id: str = Header(None, alias="X-Session-ID")
+):
     """Get a specific chat by ID"""
     print("x_session_id:", x_session_id)
     chat = chat_manager.get_chat(chat_id, x_session_id)
@@ -29,18 +35,23 @@ async def get_chat(chat_id: str, x_session_id: str = Header(None, alias="X-Sessi
         raise HTTPException(status_code=404, detail="Chat not found")
     return chat
 
+
 @router.post("/chats")
-async def start_chat_with_llm(input_data: UserInput, x_session_id: str = Header(None, alias="X-Session-ID")):
-    print("content:", input_data.city, input_data.days, input_data.type, input_data.month)
+async def start_chat_with_llm(
+    input_data: UserInput, x_session_id: str = Header(None, alias="X-Session-ID")
+):
+    print(
+        "content:", input_data.city, input_data.days, input_data.type, input_data.month
+    )
     print("x_session_id:", x_session_id)
     """Start a new chat with an initial message"""
     chat_id = str(uuid.uuid4())
     current_time = int(time.time())
-    
+
     # Add ID and role to the user message
     input_data.message_id = str(uuid.uuid4())
     input_data.role = "user"
-    
+
     # Get and prepare LLM response
     max_tries = 5
     tries = 0
@@ -61,7 +72,7 @@ async def start_chat_with_llm(input_data: UserInput, x_session_id: str = Header(
         print("Failed to get valid 'title' and 'travel_iti' after 3 attempts.")
     else:
         print("Title and travel itinerary obtained successfully.")
-    
+
     # Create chat response
     iti_first_draft = {
         "chat_id": chat_id,
@@ -72,25 +83,25 @@ async def start_chat_with_llm(input_data: UserInput, x_session_id: str = Header(
                 "city": input_data.city,
                 "days": input_data.days,
                 "type": input_data.type,
-                "month": input_data.month
-            }, 
+                "month": input_data.month,
+            },
             {
                 "message_id": str(uuid.uuid4()),
                 "kind": "sf_response",
-                "days_locations": travel_iti, 
-                "days_themes": themes
-            }
-        ]
+                "days_locations": travel_iti,
+                "days_themes": themes,
+            },
+        ],
     }
-    
+
     # Save chat
     chat_manager.save_chat(iti_first_draft, x_session_id)
     return iti_first_draft
 
+
 @router.post("/integrated-response")
 async def get_integrated_response(
-    user_input: UserInput, 
-    x_session_id: str = Header(None, alias="X-Session-ID")
+    user_input: UserInput, x_session_id: str = Header(None, alias="X-Session-ID")
 ):
     try:
         chat_response = await start_chat_with_llm(user_input, x_session_id)
@@ -115,4 +126,6 @@ async def get_integrated_response(
         raise e
     except Exception as e:
         print(f"Error in integrated response: {str(e)}")
-        raise HTTPException(status_code=500, detail="Error processing the integrated response.")
+        raise HTTPException(
+            status_code=500, detail="Error processing the integrated response."
+        )
