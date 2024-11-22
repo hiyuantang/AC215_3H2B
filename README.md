@@ -2,23 +2,29 @@
 
 ***Milestone 4 Updates:***
 
-***1. We added API-service to control the data flow of the backend and made modifications to the frontend so that it is connected to the backend in a functional way. Additionally, we integrated pytest and continuous integration into our codebase.***
+***1. We added API-service to control the data flow of the backend and made modifications to the frontend so that it is connected to the backend in a functional way. Additionally, we integrated pytest and continuous integration into our codebase. We also use formatter to keep code clean and formatted.***
 
 ***2. For testing, we specifically tested the API-service, frontend, and RAG backend, focusing on components that do not require Google Cloud Platform authentication. The test coverage is close to 100/100.***
 
 - To run test for api-service locally: `cd src/api-service`, `sh test-shell.sh`.
 - To run test for frontend locally: (Brian).
 - To run test for llm-rag locally: `cd src/llm-rag`, `sh test-shell.sh`.
+- We have linter and test incoporated as part of Continuous Integration. To see test html result, go to action (https://github.com/hiyuantang/AC215_3H2B/actions), you can choose from `Build, Lint, and Test API Service`, `Build, Lint, and Test frontend`, `Build, Lint, and Test LLM-RAG Service` on the left side bar. Once you are in one of the workflow, click on latest workflow run, you can download the `coverage-report-html` at the page bottom. 
 
-***3. All Docker containers are now running on Python 3.10 for development environment consistency.***
+![Test cov](images/test-cov-html.png)
+
+***3. All Docker containers, except frontend, are now running on Python 3.10 for development environment consistency. For llm-rag, we remove the agent related functions that we did not use in the project.***
 
 ***4. Notes on Continuous Integration (Brian).***
 
+![CI](images/ci-snapshot.png)
+
 ***5. How to run Tripee:***
 
-- Step 1: Build and Run RAG Backend: `cd src/llm-rag`, `sh docker-shell.sh`
-- Step 2: Build and Run api-service: `cd src/api-service`, `sh docker-shell.sh`. Inside api-server container: `uvicorn_server`
-- Step 3: Build and Run Frontend: `cd src/frontend`, `sh docker-shell.sh`. 
+- Step 1: Setup GCP account and secret: put your account json secret key in `secrets` directory and rename it `llm-service-account-key.json`. Assign your account `Storage Admin` and `Vertex AI Admin`. 
+- Step 2: Build and Run RAG Backend: `cd src/llm-rag`, `sh docker-shell.sh`. 
+- Step 3: Build and Run api-service: `cd src/api-service`, `sh docker-shell.sh`. Inside api-server container: `uvicorn_server`
+- Step 4: Build and Run Frontend: `cd src/frontend`, `sh docker-shell.sh`. 
 - Note: For the API service, ensure that you have deployed the fine-tuned strict-format Gemini to the endpoint. Additionally, replace the endpoint ID in the `src/api-service/api/utils/llm_utils.py` file's MODEL_ENDPOINT variable. For the RAG backend setup, make sure you have performed a recursive split.
 - Once Tripee is running, you can access the API backend service in browser: `http://localhost:9000/docs`
 - Also, you can interate with Tripee via frontend UI: `http://localhost:3000`
@@ -29,7 +35,7 @@ Before we start implementing the app we built a detailed design document outlini
 
 Here is our Solution Architecture:
 
-IMAGEIMAGEIMAGEIMAGEIMAGEIMAGEIMAGEIMAGEIMAGE
+![CI](images/solution-architecture.png)
 
 ### Technical Architecture
 
