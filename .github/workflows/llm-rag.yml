@@ -41,10 +41,10 @@ jobs:
           --user root \
           --entrypoint /bin/bash \
           llm-rag \
-          -c "cd /app/src/llm-rag && PYTHONPATH=/app/src/llm-rag pipenv --python 3.10 install --dev && PYTHONPATH=/app/src/llm-rag pipenv run pytest tests/ -v --cov=. --cov-report=xml"
+          -c "cd /app/src/llm-rag && PYTHONPATH=/app/src/llm-rag pipenv --python 3.10 install --dev && PYTHONPATH=/app/src/llm-rag pipenv run pytest tests/ -v --cov=. --cov-report=html"
 
-    - name: Upload coverage report
+    - name: Upload HTML coverage report
       uses: actions/upload-artifact@v3
       with:
-        name: coverage-report
-        path: src/llm-rag/coverage.xml
+        name: coverage-report-html
+        path: src/llm-rag/htmlcov/

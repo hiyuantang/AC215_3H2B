@@ -47,10 +47,10 @@ jobs:
           --user root \
           --entrypoint /bin/bash \
           api-service \
-          -c "cd /app/src/api-service && PYTHONPATH=/app/src/api-service pipenv --python 3.10 install --dev && PYTHONPATH=/app/src/api-service pipenv run pytest tests/ -v --cov=. --cov-report=xml"
+          -c "cd /app/src/api-service && PYTHONPATH=/app/src/api-service pipenv --python 3.10 install --dev && PYTHONPATH=/app/src/api-service pipenv run pytest tests/ -v --cov=. --cov-report=html"
 
-    - name: Upload coverage report
+    - name: Upload HTML coverage report
       uses: actions/upload-artifact@v3
       with:
-        name: coverage-report
-        path: src/api-service/coverage.xml
+        name: coverage-report-html
+        path: src/api-service/htmlcov/
