@@ -18,7 +18,7 @@ google-cloud-aiplatform = "*"
 pandas = "*"
 langchain = "*"
 llama-index = "*"
-chromadb = "*"
+chromadb = "0.5.20"
 langchain-community = "*"
 
 [requires]
