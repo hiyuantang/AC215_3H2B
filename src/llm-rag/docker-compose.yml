@@ -15,7 +15,6 @@ services:
             GCP_LOCATION: $GCP_LOCATION
             CHROMADB_HOST: llm-rag-chromadb
             CHROMADB_PORT: 8000
-            - DEV=true
         depends_on:
             - chromadb
     chromadb:
