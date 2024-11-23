@@ -108,6 +108,22 @@ The test suite utilizes Jest and React Testing Library to validate the core func
 │   └── Statement of Work.pdf
 ├── secrets
 └── src
+   ├── api-service
+    │   ├── api
+    │   │   ├── routers
+    │   │   │   └── *.py
+    │   │   └── utils
+    │   │   │   └── *.py
+    │   ├── tests
+    │   │   └── *
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── flake8.ini
+    │   ├── pytest.ini
+    │   ├── test-shell.sh
+    │   ├── docker-entrypoint.sh
+    │   └── docker-shell.sh
     ├── data-versioning
     │   ├── Dockerfile
     │   ├── Pipfile
@@ -145,13 +161,6 @@ The test suite utilizes Jest and React Testing Library to validate the core func
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
     │   └── semantic_splitter.py
-    ├── route-optimization
-    │   ├── cli.py
-    │   ├── docker-entrypoint.sh
-    │   ├── docker-shell.sh
-    │   ├── Dockerfile
-    │   ├── Pipfile
-    │   └── Pipfile.lock
     ├── frontend
     │   ├── src/app
     │   │   └── *
