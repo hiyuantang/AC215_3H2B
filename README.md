@@ -100,7 +100,7 @@ The test suite utilizes Jest and React Testing Library to validate the core func
 ├── Readme.md
 ├── data
 ├── notebooks
-│   └── CityWikiScraper.ipynb.ipynb
+│   └── CityWikiScraper.ipynb
 ├── references
 ├── reports
 │   ├── Application Mockup Design.pdf
