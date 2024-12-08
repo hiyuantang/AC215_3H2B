@@ -3,7 +3,6 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm install
-RUN npm install react-markdown
 COPY . .
 ARG NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 RUN NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY npm run build

@@ -7,9 +7,10 @@ import ReactMarkdown from 'react-markdown';
 import { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Marker, Polyline } from "@react-google-maps/api";
 import { useRouter } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
 
 const generateSessionId = () => {
-    return crypto.randomUUID();
+    return uuidv4();
 };
 
 const fetchIntegratedResponse = async (queryParams, sessionId) => {
