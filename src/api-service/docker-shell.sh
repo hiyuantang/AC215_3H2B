@@ -26,7 +26,6 @@ docker run --rm --name $IMAGE_NAME -ti \
 -v "$SECRETS_DIR":/secrets \
 -v "$PERSISTENT_DIR":/persistent \
 -p 9000:9000 \
--e DEV=1 \
 -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account-key.json \
 -e GCP_PROJECT=$GCP_PROJECT \
 -e CHROMADB_HOST=$CHROMADB_HOST \

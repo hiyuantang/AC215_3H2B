@@ -1,25 +1,36 @@
-from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 import random
+import requests
 
-
-def _get_lat_long(location_name):
+def _get_lat_long(address):
     """
-    Get the latitude and longitude for a given location name.
+    Get the latitude and longitude for a given address using Google Maps Geocoding API.
 
     Args:
-        location_name (str): The name of the location to geocode.
+        address (str): The address or location name to geocode.
+        api_key (str): Your Google Maps API key.
 
     Returns:
         tuple: A tuple containing the latitude and longitude of the location if found,
                otherwise None if the location could not be found.
     """
-    geolocator = Nominatim(user_agent="location-finder")
-    location = geolocator.geocode(location_name)
-    if location:
-        return (location.latitude, location.longitude)
+    base_url = "https://maps.googleapis.com/maps/api/geocode/json"
+    params = {
+        "address": address,
+        "key": "AIzaSyBPKHWNSuhbQwuQmmCZiLZfHjl4NgfBnNU"
+    }
+    
+    response = requests.get(base_url, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        if data['status'] == 'OK':
+            location = data['results'][0]['geometry']['location']
+            return (location['lat'], location['lng'])
+        else:
+            print(f"Error: {data['status']}")
+            return None
     else:
-        print(f"Could not find coordinates for {location_name}")
+        print(f"HTTP Error: {response.status_code}")
         return None
 
 
