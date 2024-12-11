@@ -13,8 +13,8 @@ from vertexai.generative_models import GenerativeModel, GenerationConfig
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 GCP_LOCATION = os.environ["GCP_LOCATION"]
 GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
-TRAIN_DATASET = "gs://"+GCS_BUCKET_NAME+"/llm-finetune-dataset/train.jsonl" # Replace with your dataset
-VALIDATION_DATASET = "gs://"+GCS_BUCKET_NAME+"/llm-finetune-dataset/test.jsonl" # Replace with your dataset
+TRAIN_DATASET = "gs://"+GCS_BUCKET_NAME+"/llm-finetune-dataset-workflow/train.jsonl" # Replace with your dataset
+VALIDATION_DATASET = "gs://"+GCS_BUCKET_NAME+"/llm-finetune-dataset-workflow/test.jsonl" # Replace with your dataset
 GENERATIVE_SOURCE_MODEL = "gemini-1.5-flash-002" # gemini-1.5-pro-002
 # Configuration settings for the content generation
 generation_config = {
@@ -33,10 +33,10 @@ def train(wait_for_job=False):
         source_model=GENERATIVE_SOURCE_MODEL,
         train_dataset=TRAIN_DATASET,
         validation_dataset=VALIDATION_DATASET,
-        epochs=6, # change to 2-3
+        epochs=2, # change to 2-3
         adapter_size=4,
         learning_rate_multiplier=1.0,
-        tuned_model_display_name="strict-format",
+        tuned_model_display_name="strict-format-pipeline",
     )
     print("Training job started. Monitoring progress...\n\n")
     
