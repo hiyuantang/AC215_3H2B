@@ -21,8 +21,8 @@ PIPELINE_ROOT = f"{BUCKET_URI}/pipeline_root/root"
 GCS_SERVICE_ACCOUNT = os.environ["GCS_SERVICE_ACCOUNT"]
 GCP_REGION = os.environ["GCP_REGION"]
 
-DATA_CREATOR_IMAGE = "hiyt/tripee-data-creator"
-GEMINI_FINETUNER_IMAGE = "hiyt/tripee-gemini-finetuner"
+DATA_CREATOR_IMAGE = "docker.io/hiyt/tripee-data-creator:0.1"
+GEMINI_FINETUNER_IMAGE = "docker.io/hiyt/tripee-gemini-finetuner:0.1"
 
 def generate_uuid(length: int = 8) -> str:
     return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
@@ -37,11 +37,12 @@ def data_creator():
             image=DATA_CREATOR_IMAGE,
             command=[],
             args=[
+                "python",
                 "cli.py",
                 "--generate",
                 "--prepare",
                 "--save_prompt",
-                f"--upload",
+                "--upload",
             ],
         )
         return container_spec
@@ -81,6 +82,7 @@ def gemini_finetuner():
             image=GEMINI_FINETUNER_IMAGE,
             command=[],
             args=[
+                "python",
                 "cli.py",
                 "--train",
             ],

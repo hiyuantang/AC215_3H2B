@@ -1,25 +1,26 @@
 # PIPELINE DEFINITION
 # Name: data-creator-pipeline
 components:
-  comp-data-collector:
+  comp-data-creator:
     executorLabel: exec-data-creator
 deploymentSpec:
   executors:
-    exec-data-collector:
+    exec-data-creator:
       container:
         args:
+        - python
         - cli.py
         - --generate
         - --prepare
         - --save_prompt
         - --upload
-        image: hiyt/tripee-data-creator
+        image: docker.io/hiyt/tripee-data-creator
 pipelineInfo:
   name: data-creator-pipeline
 root:
   dag:
     tasks:
-      data-collector:
+      data-creator:
         cachingOptions:
           enableCache: true
         componentRef:

@@ -19,7 +19,7 @@ docker run --rm --name $IMAGE_NAME -ti \
 -v "$BASE_DIR":/app \
 -v "$SECRETS_DIR":/secrets \
 -v "$BASE_DIR/../data-creator":/data-creator \
--v "$BASE_DIR/../gemini-finetuner":/gemini-finetuner\
+-v "$BASE_DIR/../gemini-finetuner":/gemini-finetuner \
 -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account-key.json \
 -e GCP_PROJECT=$GCP_PROJECT \
 -e GCS_BUCKET_NAME=$GCS_BUCKET_NAME \
