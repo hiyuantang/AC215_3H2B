@@ -11,14 +11,72 @@ Instructions to Run the Workflow:
 - Build and Run the Workflow Container: `cd src/workflow`, then `sh docker-shell.sh`
 - Once inside the workflow container, execute the following command to run the pipeline: `python cli.py --pipeline`
 
+Notes:
+We did not implement validation checks to ensure that only models meeting performance thresholds are deployed. Our rationale is that such implementation is less effective for Tripee because we utilize Vertex AI's built-in hyperparameter fine-tuning method to fine-tune the large language model, rather than training it using a custom container. Obtaining performance metrics in this context is complicated, and the selection process is much easier by inspecting the GCP GUI. Additionally, after fine-tuning, all models are deployed automatically, and we can shut down the models we do not need. Moreover, our model is relatively easy to tune. We experimented with over 10 different hyperparameter sets, and as long as the training epoch exceeds six, the loss differences are indistinguishable.
+
 Screenshot for Successful Workflow Run:
 ![ML Workflow](images/ml_pipeline.png)
 
-## Deployment ##
-Our Deployment container can do both deployment to a virtual machine and kubernetes cluster. 
+Screenshot for Workflow Created Data `(llm-finetune-dataset-workflow)`:
+![ML Workflow](images/workflow_bucket.png)
 
-Instruction to deploy Tripee to a virual machine: 
-- 
+Screenshot for Workflow Automatically Deployed Model `(strict-format-pipeline)`:
+![ML Workflow](images/workflow_deploy.png)
+
+## Deployment ##
+Our Deployment container can do both deployment to a virtual machine and kubernetes cluster using Ansible playbooks. 
+
+***Prerequisites and setup instructions:***
+- Search for each of these in the GCP search bar and click enable to enable these API's
+   - Compute Engine API
+   - Service Usage API
+   - Cloud Resource Manager API
+   - Google Container Registry API
+- Setup GCP Service Account for deployment
+   - create new service accounts called `deployment` and `gcp-service`.
+      - For `deployment` give the following roles::
+         - Compute Admin
+         - Compute OS Login
+         - Container Registry Service Agent
+         - Kubernetes Engine Admin
+         - Service Account User
+         - Storage Admin
+      - For `gcp-service` give the following roles:
+         - Storage Object Viewer
+         - Vertex AI Administrator
+- Generate and rename the json key file to `deployment.json` and `gcp-service.json` respectively. 
+
+- Deployment instructions:
+   - `cd` into deployment
+   - Go into `docker-shell.sh` and change `GCP_PROJECT` to your `project id`
+   - Run `sh docker-shell.sh`
+   - Edit GCP related variables `gcp_`, include `docker_id`, in `inventory.yml`
+   - Run this within the deployment container:
+      - `gcloud compute project-info add-metadata --project <YOUR GCP_PROJECT> --metadata enable-oslogin=TRUE`
+      - `cd /secrets`
+      - `ssh-keygen -f ssh-key-deployment`
+      - `cd /app`
+      - `gcloud compute os-login ssh-keys add --key-file=/secrets/ssh-key-deployment.pub`
+      - From the output of the above command keep note of the username, for example: `sa_100110341521630214262`. Replace the corresponding variable in `inventory.yml`. 
+   - Option 1: Deploy to a Virtual Machine:
+      - Build and Push Docker Containers to DockerHub: `ansible-playbook deploy-docker-images.yml -i inventory.yml`
+      - Create Compute Instance (VM) Server in GCP: `ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=present`
+      - Provision Compute Instance in GCP: `ansible-playbook deploy-provision-instance.yml -i inventory.yml`
+      - Setup Docker Containers in the Compute Instance: `ansible-playbook deploy-setup-containers.yml -i inventory.yml`
+      - Setup Webserver on the Compute Instance: `ansible-playbook deploy-setup-webserver.yml -i inventory.yml`
+      - Once done, you can access Tripee in: `http://<External IP>/`
+      - Delete the Compute Instance / Persistent disk: `ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=absent`
+   - Option 2: Deployment with Scaling using Kubernetes: 
+      - This step is only required if you have NOT already done this: `ansible-playbook deploy-docker-images.yml -i inventory.yml`
+      - Create & Deploy Cluster: `ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present`
+      - Copy the `nginx_ingress_ip` from the terminal from the create cluster command
+      - Go to `http://<YOUR INGRESS IP>.sslip.io` for accessing Tripee
+      - Delete Cluster: `ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=absent`
+
+## Usage details and examples ##
+
+
+## Known issues and limitations ##
 
 ## Structure
 ```
