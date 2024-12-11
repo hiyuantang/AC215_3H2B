@@ -2,6 +2,9 @@
 
 echo "Container is running!!!"
 
+chmod +x /app/set_env.sh
+source /app/set_env.sh
+
 args="$@"
 echo $args
 

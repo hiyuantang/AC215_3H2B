@@ -122,7 +122,7 @@ Sample JSON Output:
 Note: The sample JSON provided includes only three Q&A pairs for brevity. The actual output should contain all 20 pairs as requested."""
 
 INPUT_PROMPT = """Generate 20 diverse, informative, and engaging question-answer pairs about extremely concise travel itinary following these guidelines. Ensure each pair is independent and self-contained. """
-NUM_ITERATIONS = 5 # Loop to generate and save the content
+NUM_ITERATIONS = 1 # Loop to generate and save the content
 
 def generate():
     print("generate()")
@@ -253,7 +253,7 @@ def upload():
     # Upload
     for index, data_file in enumerate(data_files):
         filename = os.path.basename(data_file)
-        destination_blob_name = os.path.join("llm-finetune-dataset", filename)
+        destination_blob_name = os.path.join("llm-finetune-dataset-workflow", filename)
         blob = bucket.blob(destination_blob_name)
         print("Uploading file:", data_file, destination_blob_name)
         blob.upload_from_filename(data_file, timeout=timeout)
