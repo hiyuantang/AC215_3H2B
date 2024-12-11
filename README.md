@@ -45,8 +45,7 @@ Our Deployment container can do both deployment to a virtual machine and kuberne
          - Storage Object Viewer
          - Vertex AI Administrator
 - Generate and rename the json key file to `deployment.json` and `gcp-service.json` respectively. 
-
-- Deployment instructions:
+- SSH Setup: 
    - `cd` into deployment
    - Go into `docker-shell.sh` and change `GCP_PROJECT` to your `project id`
    - Run `sh docker-shell.sh`
@@ -58,6 +57,13 @@ Our Deployment container can do both deployment to a virtual machine and kuberne
       - `cd /app`
       - `gcloud compute os-login ssh-keys add --key-file=/secrets/ssh-key-deployment.pub`
       - From the output of the above command keep note of the username, for example: `sa_100110341521630214262`. Replace the corresponding variable in `inventory.yml`. 
+- Other Setup:
+   - To shorten deployment time and save on budget, some steps are required before deployment for the current setup but could eventually be integrated into the deployment process:
+      - You must obtain the Endpoint ID of the fine-tuned Gemini model beforehand and replace the corresponding variable `MODEL_ENDPOINT` in `src/api-service/api/utils/llm_utils.py` before pushing the image to DockerHub.
+      - You must perform chunking and embedding for recursive splitting in the `llm-rag` container before pushing the image to DockerHub, as the deployment Ansible playbook will only handle the loading step.
+
+
+- Deployment instructions:
    - Option 1: Deploy to a Virtual Machine:
       - Build and Push Docker Containers to DockerHub: `ansible-playbook deploy-docker-images.yml -i inventory.yml`
       - Create Compute Instance (VM) Server in GCP: `ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=present`
@@ -74,9 +80,30 @@ Our Deployment container can do both deployment to a virtual machine and kuberne
       - Delete Cluster: `ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=absent`
 
 ## Usage details and examples ##
+Here is the frontend you will see after you deploy Tripee using Kubernetes:
+- Tripee is accessible from `http://35.224.145.169.sslip.io/` in our case
+- In the frontend, we need to input the city, type of trip, and travel dates information of a trip that we want to generate the itinerary
+- Click `Plan My Trip`
+![Frontend k8s](images/frontend_k8s.png)
+
+Then, you will be directed to the result page:
+- On the top left, you will see the Google Map visualization.
+- On the top right, you can interact with the date blocks to change the Google Map visualization.
+- The main body is the `Itinerary Summary`, which starts with a city introduction, followed by a detailed plan, and ends with custom tips specific to the generated trip.
+- Scroll to the bottom, and you can click `Back to Home`, which will take you back to the main page, allowing you to start generating another itinerary.
+![Result k8s](images/result_k8s.png)
+![Result k8s](images/result_backtohome.png)
 
 
 ## Known issues and limitations ##
+
+1. The Kubernetes cluster deployment is not stable, whereas the virtual machine is. The Kubernetes deployment works most of the time, but occasionally the API service becomes unresponsive. Waiting a few minutes might solve the issue. 
+2. The geoencoding API is paid and has a traffic limit of 50 queries per second, which means our application currently cannot handle a very large number of travel dates. Each location geoencoding query counts as one query, and each day generates 2 to 5 locations. This means the maximum number of travel dates we can handle per second is approximately 15 days, which imposes a hard limit on how our application can scale.
+3. Tripee currently does not have chat history management, meaning that once the itinerary is generated and we return to the home page, the travel plan is lost. We would like to implement a chat history management feature, as well as a PDF-friendly itinerary downloading function, in this application.
+4. Map visualization and route optimization do not take road or traffic conditions into account, which makes Tripee's route optimization ineffective in saving time.
+5. Tripee does not support location editing. It would be beneficial to give users more freedom to edit their travel plans.
+6. More user input options could be implemented, such as allowing users to exclude specific locations they do not want to visit or mark places they have already been to and want to avoid, while focusing on visiting new destinations.
+
 
 ## Structure
 ```
