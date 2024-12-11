@@ -21,7 +21,7 @@ PIPELINE_ROOT = f"{BUCKET_URI}/pipeline_root/root"
 GCS_SERVICE_ACCOUNT = os.environ["GCS_SERVICE_ACCOUNT"]
 GCP_REGION = os.environ["GCP_REGION"]
 
-DATA_CREATOR_IMAGE = "docker.io/hiyt/tripee-data-creator:0.1"
+DATA_CREATOR_IMAGE = "docker.io/hiyt/tripee-dataset-creator:0.1"
 GEMINI_FINETUNER_IMAGE = "docker.io/hiyt/tripee-gemini-finetuner:0.1"
 
 def generate_uuid(length: int = 8) -> str:
@@ -211,7 +211,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pipeline",
         action="store_true",
-        help="Cheese App Pipeline",
+        help="Tripee Pipeline",
     )
 
     args = parser.parse_args()

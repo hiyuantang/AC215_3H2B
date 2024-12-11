@@ -14,7 +14,7 @@ deploymentSpec:
         - --prepare
         - --save_prompt
         - --upload
-        image: docker.io/hiyt/tripee-data-creator
+        image: docker.io/hiyt/tripee-data-creator:0.1
 pipelineInfo:
   name: data-creator-pipeline
 root:
