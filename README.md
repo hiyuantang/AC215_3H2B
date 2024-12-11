@@ -1,99 +1,24 @@
-#### Project Tripee Milestone 4 Organization
+## Project Tripee Milestone 5 Organization ##
 
-***Milestone 4 Updates:***
+## Milestone 5 Updates: ##
 
-***1. We added API-service to control the data flow of the backend and made modifications to the frontend so that it is connected to the backend in a functional way. Additionally, we integrated pytest and continuous integration into our codebase. We also use formatter to keep code clean and formatted.***
+## Workflow ##
+We updated the machine learning pipeline to streamline the processes of dataset creation, pre-processing, and uploading using the `data-creator` image, as well as LLM fine-tuning and deployment using the `gemini-finetuner` image.
 
-***2. For testing, we specifically tested the API-service, frontend, and RAG backend, focusing on components that do not require Google Cloud Platform authentication. The test coverage is close to 100/100.***
+Instructions to Run the Workflow:
+- Push the `data-creator` and `gemini-finetuner` containers to DockerHub: `cd src/<container name>`, then `sh docker-push.sh`
+- Update your GCP configuration in the file: `src/workflow/docker-shell.sh`
+- Build and Run the Workflow Container: `cd src/workflow`, then `sh docker-shell.sh`
+- Once inside the workflow container, execute the following command to run the pipeline: `python cli.py --pipeline`
 
-- To run test for api-service locally: `cd src/api-service`, `sh test-shell.sh`.
-- To run test for frontend locally: `cd src/frontend`, `sh test-shell.sh`.
-- To run test for llm-rag locally: `cd src/llm-rag`, `sh test-shell.sh`.
-- We have linter and test incoporated as part of Continuous Integration. To see test html result, go to action (https://github.com/hiyuantang/AC215_3H2B/actions), you can choose from `Build, Lint, and Test API Service`, `Build, Lint, and Test frontend`, `Build, Lint, and Test LLM-RAG Service` on the left side bar. Once you are in one of the workflow, click on latest workflow run, you can download the `coverage-report-html` at the page bottom. 
+Screenshot for Successful Workflow Run:
+![ML Workflow](images/ml_pipeline.png)
 
-Here is a snapeshot of test coverage for API Service: 
+## Deployment ##
+Our Deployment container can do both deployment to a virtual machine and kubernetes cluster. 
 
-![Test cov](images/test-cov-html.png)
-
-***3. All Docker containers, except frontend, are now running on Python 3.10 for development environment consistency. For llm-rag, we remove the agent related functions that we did not use in the project.***
-
-***4. Notes on Continuous Integration***
-
-Our GitHub Action workflow automates the process of building, linting, testing, and uploading test coverage reports for API service, frontend, and RAG backend. It runs on main and milestone4 branches and performs steps including building Docker images, running linting checks, executing tests with coverage, and uploading the HTML test coverage report as an artifact.
-
-Here is a snapshot of we pass the workflow runs: 
-
-![CI](images/ci-snapshot.png)
-
-***5. How to run Tripee:***
-
-- Step 1: Setup GCP account and secret: put your account json secret key in `secrets` directory and rename it `llm-service-account-key.json`. Assign your account `Storage Admin` and `Vertex AI Admin`. 
-- Step 2: Build and Run RAG Backend: `cd src/llm-rag`, `sh docker-shell.sh`. 
-- Step 3: Build and Run api-service: `cd src/api-service`, `sh docker-shell.sh`. Inside api-server container: `uvicorn_server`
-- Step 4: Build and Run Frontend: `cd src/frontend`, `sh docker-shell.sh`. 
-- Note: For the API service, ensure that you have deployed the fine-tuned strict-format Gemini to the endpoint. Additionally, replace the endpoint ID in the `src/api-service/api/utils/llm_utils.py` file's MODEL_ENDPOINT variable. For the RAG backend setup, make sure you have performed a recursive split.
-- Once Tripee is running, you can access the API backend service in browser: `http://localhost:9000/docs`
-- Also, you can interate with Tripee via frontend UI: `http://localhost:3000`
-
-***6. Other Modifications:***
-
-- After careful consideration, we decided to move the route optimization component into the api-service for more convenient implementation. The reasoning is that our naive route optimization does not involve complex computations, so embedding it directly within the api-service expedites response times compared to hosting it as a standalone container, like the RAG backend, which would require additional container I/O. However, if the route optimization were to become more complex in the future, it would be more reasonable to invest extra time in developing it as a standalone microservice.
-
-***7. Application Design***
-
-Before we start implementing the app we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
-
-Here is our Solution Architecture:
-
-![CI](images/solution-architecture.png)
-
-***8. Technical Architecture***
-
-Here is our Technical Architecture:
-
-![CI](images/tech-architecture.png)
-
-***9. Backend API***
-
-We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
-
-![API Backend](images/api-backend.png)
-
-***10. Frontend UI:***
-
-***Enter required information in the Tripee Homepage:***
-![Frontend UI 0](images/frontend0.png)
-
-***Hit Plan My Trip. You will get a custom travel itinerary with Google Map visualization in 5-10 seconds***
-![Frontend UI 1](images/frontend1.png)
-
-
-***11. Backend Tests***
-
-The test suite employs pytest fixtures and mocking to validate python script. The tests cover the following components:
-
-LLM RAG Test:
-- Core Embedding Logic: Validates embedding generation, city mapping, and ChromaDB collection management with proper metadata structures.
-- Text Chunking: Tests multiple splitting methods (char-split, recursive-split, semantic-split) to ensure proper content segmentation and metadata preservation.
-- Embedding Generation Pipeline: Validates the process of converting chunks into proper embeddings, with appropriate batch processing and file I/O handling.
-- ChromaDB Integration: Validates collection management including creation, deletion, and data loading, while handling various edge cases and maintaining data integrity.
-- Query Processing: Validates semantic search capabilities across different splitting methods, including metadata filtering and lexical search, ensuring proper result structure and dimensionality.
-- Chat Functionality: Validates end-to-end conversation flow, from query embedding to response generation, with proper document retrieval and prompt construction across different splitting methods.
-Each component uses extensive mocking to isolate functionality and verify correct behavior under various scenarios.
-
-API Service Test:
-
-- The API service test focuses on scripts and functions that do not involve GCP credential verification, meaning that some parts of the scripts are not tested. This is because the demo is written in a way that, upon importing the script, it immediately prompts for GCP credential verification. To bypass this verification process, we would risk introducing a significant number of errors due to modifications to the logical structure of the codebase. That said, unit tests are conducted, while integration and system tests are compromised.
-
-
-***12. Frontend Tests***
-The test suite utilizes Jest and React Testing Library to validate the core functionalities. The tests encompass the following components:
-
-- Home Page Rendering: Verifies that the main heading and description are correctly displayed
-- Form Inputs and Validation: Tests the presence and functionality of form inputs for "City," "Type of Trip," "Start date," and "End date." Ensures that the form does not submit and navigate to the results page when required fields are missing
-- Navigation Workflow: Confirms that submitting the form with all required fields correctly navigates the user to the results page with appropriate query parameters reflecting the user's input
-- Results Page Data Fetching: Validates that the results page successfully fetches and displays trip details including the itinerary and location information
-- Map Integration and Rendering: Checks that the map component renders correctly with markers and polylines after data fetching. This verifies the integration with the Google Maps API and the visual representation of the trip itinerary.
+Instruction to deploy Tripee to a virual machine: 
+- 
 
 ## Structure
 ```
@@ -108,7 +33,30 @@ The test suite utilizes Jest and React Testing Library to validate the core func
 │   └── Statement of Work.pdf
 ├── secrets
 └── src
-   ├── api-service
+    ├── deployment
+    │   ├── nginx-conf
+    │   │   └── nginx
+    │   │       └── nginx.conf
+    │   ├── deploy-docker-images.yml
+    │   ├── deploy-create-instance.yml
+    │   ├── deploy-provision-instance.yml
+    │   ├── deploy-setup-containers.yml
+    │   ├── deploy-setup-webserver.yml
+    │   ├── deploy-k8s-cluster.yml
+    │   ├── invertory.yml
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── docker-entrypoint.sh
+    │   └── docker-shell.sh
+    ├── workflow
+    │   ├── cli.py
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── docker-entrypoint.sh
+    │   └── docker-shell.sh
+    ├── api-service
     │   ├── api
     │   │   ├── routers
     │   │   │   └── *.py
@@ -137,6 +85,7 @@ The test suite utilizes Jest and React Testing Library to validate the core func
     │   ├── Pipfile
     │   ├── Pipfile.lock
     │   ├── cli.py
+    │   ├── set_env.sh
     │   ├── docker-entrypoint.sh
     │   └── docker-shell.sh
     ├── gemini-finetuner
@@ -144,6 +93,7 @@ The test suite utilizes Jest and React Testing Library to validate the core func
     │   ├── Pipfile
     │   ├── Pipfile.lock
     │   ├── cli.py
+    │   ├── set_env.sh
     │   ├── docker-entrypoint.sh
     │   └── docker-shell.sh
     ├── llm-rag
@@ -276,6 +226,34 @@ Contents:
 
 The scraper starts by targeting the Wikipedia pages of the specified cities. It parses the page content to extract and organize the city information, saving the data into separate text files for each city. The scraping criteria include sections such as History, Geography, Demographics, Economy, and Points of Interest. Each text file contains structured data under labeled sections corresponding to these categories, facilitating easy reading, further processing, and analysis.
 
+## Application Design ##
+
+Before we start implementing the app we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
+
+Here is our Solution Architecture:
+
+![CI](images/solution-architecture.png)
+
+## Technical Architecture ##
+
+Here is our Technical Architecture:
+
+![CI](images/tech-architecture.png)
+
+## Backend API ##
+
+We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
+
+![API Backend](images/api-backend.png)
+
+## Frontend UI ##
+
+***Enter required information in the Tripee Homepage:***
+![Frontend UI 0](images/frontend0.png)
+
+***Hit Plan My Trip. You will get a custom travel itinerary with Google Map visualization in 5-10 seconds***
+![Frontend UI 1](images/frontend1.png)
+
 ## Containers ##
 
 We offer two options for building and running containers:
@@ -404,23 +382,84 @@ The container applies RAG (Retrieval Augmented Generation) to a `Gemini 1.5 flas
 
 Note: The `--chunk_type` is not limited to `char-split`; we can also use `recursive-split` or `semantic-split`.
 
-## Extra Works ##
-
-**Route Optimizer Container**
-
-The container accepts a list of location names, retrieves their coordinates using the Geopy API, and calculates the optimal route between them using a greedy nearest-neighbor algorithm. The first location is randomly selected and the remaining locations are ordered by the shortest distance from the previous stop.
-
-- To get the latitude and longitude of the locations and optimize the route: `python cli.py "Location1" "Location2" "Location3" ...`
-- The CLI outputs the optimal order of locations starting from a random point and following the shortest path to the next location.
-
-**Trip Advisor frontend Container**
+**Tripee frontend Container**
 
 This frontend allows users to input trip details, including destination city, type of trip, and travel dates. Once submitted, the user is redirected to a page that displays a map with trip suggestions based on the model. The map shows optimized routes between locations, and users can view details such as travel times, locations, reasons for each stop, and travel tips.
 
 - To select travel preferences and submit the form, users can interact with dropdowns and date pickers in the UI.
 - The map visualizes the generated trip itinerary, showing location routes and travel recommendations.
 
-----
+To run the frontend container:<br />
+- Build and run locally: `sh docker-shell.sh`
+- Access at: `http://localhost:3000`
+
+
+## Testing ##
+
+For testing, we specifically tested the API-service, frontend, and RAG backend, focusing on components that do not require Google Cloud Platform authentication. The test coverage is close to 100/100.***
+
+- To run test for api-service locally: `cd src/api-service`, `sh test-shell.sh`.
+- To run test for frontend locally: `cd src/frontend`, `sh test-shell.sh`.
+- To run test for llm-rag locally: `cd src/llm-rag`, `sh test-shell.sh`.
+- We have linter and test incoporated as part of Continuous Integration. To see test html result, go to action (https://github.com/hiyuantang/AC215_3H2B/actions), you can choose from `Build, Lint, and Test API Service`, `Build, Lint, and Test frontend`, `Build, Lint, and Test LLM-RAG Service` on the left side bar. Once you are in one of the workflow, click on latest workflow run, you can download the `coverage-report-html` at the page bottom. 
+
+Here is a snapeshot of test coverage for API Service: 
+
+![Test cov](images/test-cov-html.png)
+
+The test suite employs pytest fixtures and mocking to validate python script. The tests cover the following components:
+
+LLM RAG Test:
+- Core Embedding Logic: Validates embedding generation, city mapping, and ChromaDB collection management with proper metadata structures.
+- Text Chunking: Tests multiple splitting methods (char-split, recursive-split, semantic-split) to ensure proper content segmentation and metadata preservation.
+- Embedding Generation Pipeline: Validates the process of converting chunks into proper embeddings, with appropriate batch processing and file I/O handling.
+- ChromaDB Integration: Validates collection management including creation, deletion, and data loading, while handling various edge cases and maintaining data integrity.
+- Query Processing: Validates semantic search capabilities across different splitting methods, including metadata filtering and lexical search, ensuring proper result structure and dimensionality.
+- Chat Functionality: Validates end-to-end conversation flow, from query embedding to response generation, with proper document retrieval and prompt construction across different splitting methods.
+Each component uses extensive mocking to isolate functionality and verify correct behavior under various scenarios.
+
+API Service Test:
+
+- The API service test focuses on scripts and functions that do not involve GCP credential verification, meaning that some parts of the scripts are not tested. This is because the demo is written in a way that, upon importing the script, it immediately prompts for GCP credential verification. To bypass this verification process, we would risk introducing a significant number of errors due to modifications to the logical structure of the codebase. That said, unit tests are conducted, while integration and system tests are compromised.
+
+
+Frontend Tests: 
+The test suite utilizes Jest and React Testing Library to validate the core functionalities. The tests encompass the following components:
+
+- Home Page Rendering: Verifies that the main heading and description are correctly displayed
+- Form Inputs and Validation: Tests the presence and functionality of form inputs for "City," "Type of Trip," "Start date," and "End date." Ensures that the form does not submit and navigate to the results page when required fields are missing
+- Navigation Workflow: Confirms that submitting the form with all required fields correctly navigates the user to the results page with appropriate query parameters reflecting the user's input
+- Results Page Data Fetching: Validates that the results page successfully fetches and displays trip details including the itinerary and location information
+- Map Integration and Rendering: Checks that the map component renders correctly with markers and polylines after data fetching. This verifies the integration with the Google Maps API and the visual representation of the trip itinerary.
+
+***For testing, we specifically tested the API-service, frontend, and RAG backend, focusing on components that do not require Google Cloud Platform authentication. The test coverage is close to 100/100.***
+
+- To run test for api-service locally: `cd src/api-service`, `sh test-shell.sh`.
+- To run test for frontend locally: `cd src/frontend`, `sh test-shell.sh`.
+- To run test for llm-rag locally: `cd src/llm-rag`, `sh test-shell.sh`.
+- We have linter and test incoporated as part of Continuous Integration. To see test html result, go to action (https://github.com/hiyuantang/AC215_3H2B/actions), you can choose from `Build, Lint, and Test API Service`, `Build, Lint, and Test frontend`, `Build, Lint, and Test LLM-RAG Service` on the left side bar. Once you are in one of the workflow, click on latest workflow run, you can download the `coverage-report-html` at the page bottom. 
+
+Here is a snapeshot of test coverage for API Service: 
+
+![Test cov](images/test-cov-html.png)
+
+## Continuous Integration ##
+
+Our GitHub Action workflow automates the process of building, linting, testing, and uploading test coverage reports for API service, frontend, and RAG backend. It runs on main and milestone4 branches and performs steps including building Docker images, running linting checks, executing tests with coverage, and uploading the HTML test coverage report as an artifact.
+
+Here is a snapshot of we pass the workflow runs: 
+
+![CI](images/ci-snapshot.png)
+
+## How to run Tripee Locally ##
+
+- Step 1: Setup GCP account and secret: put your account json secret key in `secrets` directory and rename it `llm-service-account-key.json`. Assign your account `Storage Admin` and `Vertex AI Admin`. 
+- Step 2: Build and Run RAG Backend: `cd src/llm-rag`, `sh docker-shell.sh`. 
+- Step 3: Build and Run api-service: `cd src/api-service`, `sh docker-shell.sh`. Inside api-server container: `uvicorn_server`
+- Step 4: Build and Run Frontend: `cd src/frontend`, `sh docker-shell.sh`. 
+- Note: For the API service, ensure that you have deployed the fine-tuned strict-format Gemini to the endpoint. Additionally, replace the endpoint ID in the `src/api-service/api/utils/llm_utils.py` file's MODEL_ENDPOINT variable. For the RAG backend setup, make sure you have performed a recursive split.
+- Once Tripee is running, you can access the API backend service in browser: `http://localhost:9000/docs`
+- Also, you can interate with Tripee via frontend UI: `http://localhost:3000`
 
 **Notebooks/Reports**
 
