@@ -15,7 +15,7 @@ deploymentSpec:
         - --prepare
         - --save_prompt
         - --upload
-        image: docker.io/hiyt/tripee-dataset-creator:0.1
+        image: docker.io/hiyt/tripee-dataset-creator:0.2
         resources:
           cpuLimit: 0.5
           memoryLimit: 2.0
@@ -24,7 +24,7 @@ deploymentSpec:
         args:
         - cli.py
         - --train
-        image: docker.io/hiyt/tripee-gemini-finetuner:0.1
+        image: docker.io/hiyt/tripee-gemini-finetuner:0.2
 pipelineInfo:
   name: ml-pipeline
 root:
