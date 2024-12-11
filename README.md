@@ -103,6 +103,7 @@ Then, you will be directed to the result page:
 4. Map visualization and route optimization do not take road or traffic conditions into account, which makes Tripee's route optimization ineffective in saving time.
 5. Tripee does not support location editing. It would be beneficial to give users more freedom to edit their travel plans.
 6. More user input options could be implemented, such as allowing users to exclude specific locations they do not want to visit or mark places they have already been to and want to avoid, while focusing on visiting new destinations.
+7. The route optimization selects a random starting location, which is not an optimal case due to the limited information Tripee receives from users. Adding a hotel input might be a good idea.
 
 
 ## Structure
