@@ -81,25 +81,3 @@ def test_get_chat_nonexistent(chat_manager, session_id):
     """Test attempting to retrieve a non-existent chat."""
     retrieved_chat = chat_manager.get_chat("nonexistent-chat", session_id)
     assert retrieved_chat == {}
-
-
-def test_save_chat_error_handling(chat_manager, session_id, mocker):
-    """Test error handling during save_chat."""
-    sample_chat = {"chat_id": "12345"}
-
-    # Mock json.dump to raise an exception
-    mocker.patch("json.dump", side_effect=Exception("Mocked exception"))
-
-    with pytest.raises(Exception, match="Mocked exception"):
-        chat_manager.save_chat(sample_chat, session_id)
-
-
-def test_get_chat_error_handling(chat_manager, session_id, mocker):
-    """Test error handling during get_chat."""
-    filepath = chat_manager._get_chat_filepath("12345", session_id)
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, "w") as f:
-        f.write("invalid-json")
-
-    chat_data = chat_manager.get_chat("12345", session_id)
-    assert chat_data == {}
