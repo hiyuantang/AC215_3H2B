@@ -2,6 +2,7 @@ from geopy.distance import geodesic
 import random
 import requests
 
+
 def _get_lat_long(address):
     """
     Get the latitude and longitude for a given address using Google Maps Geocoding API.
@@ -19,7 +20,7 @@ def _get_lat_long(address):
         "address": address,
         "key": "AIzaSyBPKHWNSuhbQwuQmmCZiLZfHjl4NgfBnNU"
     }
-    
+
     response = requests.get(base_url, params=params)
     if response.status_code == 200:
         data = response.json()

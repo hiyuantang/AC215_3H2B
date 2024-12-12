@@ -30,5 +30,6 @@ docker run --rm --name $IMAGE_NAME -ti \
 -e GCP_PROJECT=$GCP_PROJECT \
 -e CHROMADB_HOST=$CHROMADB_HOST \
 -e CHROMADB_PORT=$CHROMADB_PORT \
+-e DEV=1 \
 --network tripee-network \
 $IMAGE_NAME
