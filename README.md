@@ -164,7 +164,7 @@ Then, you will be directed to the result page:
     │   ├── Pipfile.lock
     │   ├── docker-entrypoint.sh
     │   └── docker-shell.sh
-    ├── dataset-creator
+    ├── data-creator
     │   ├── data
     │   │   └── *.dvc
     │   ├── Dockerfile
