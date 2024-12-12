@@ -1,5 +1,0 @@
-outs:
-- md5: fbed5634368bcb3504407d0e81efd03b
-  size: 435293
-  hash: md5
-  path: instruct-dataset.csv
