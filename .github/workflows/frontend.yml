@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - milestone4
+      - milestone5
   pull_request:
     branches:
       - main
       - milestone4
+      - milestone5
 
 jobs:
   frontend:

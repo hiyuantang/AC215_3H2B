@@ -19,7 +19,12 @@ jest.mock('react-markdown', () => (props) => <div>{props.children}</div>);
 
 Object.defineProperty(global, 'crypto', {
   value: {
-    randomUUID: jest.fn(() => 'test-session-id'),
+      getRandomValues: (buffer) => {
+          for (let i = 0; i < buffer.length; i++) {
+              buffer[i] = Math.floor(Math.random() * 256);
+          }
+          return buffer;
+      },
   },
 });
 
