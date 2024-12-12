@@ -111,8 +111,7 @@ def generate_chat_response(
     In the main body, provide a detailed travel itinerary for each day according to the themes and locations specified in
     the original plan. Avoid altering the days, themes, or location sequence. Do not arrange time, such as morning, afternoon, evening.
     Each location should be separated as a bullet point.
-    At the end of the itinerary, offer travel tips tailored to the season, specifically for February,
-    ensuring visitors can make the most of their trip."""
+    At the end of the itinerary, offer travel tips tailored to the season, ensuring visitors can make the most of their trip."""
     )
 
     try:

@@ -1,0 +1,27 @@
+# PIPELINE DEFINITION
+# Name: gemini-finetuner-pipeline
+components:
+  comp-data-collector:
+    executorLabel: exec-gemini-finetuner
+deploymentSpec:
+  executors:
+    exec-data-collector:
+      container:
+        args:
+        - cli.py
+        - --train
+        image: hiyt/tripee-gemini-finetuner
+pipelineInfo:
+  name: gemini-finetuner-pipeline
+root:
+  dag:
+    tasks:
+      data-collector:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-gemini-finetuner
+        taskInfo:
+          name: gemini-finetuner
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.3.0

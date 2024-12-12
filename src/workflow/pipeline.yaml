@@ -1,0 +1,50 @@
+# PIPELINE DEFINITION
+# Name: ml-pipeline
+components:
+  comp-data-creator:
+    executorLabel: exec-data-creator
+  comp-gemini-finetuner:
+    executorLabel: exec-gemini-finetuner
+deploymentSpec:
+  executors:
+    exec-data-creator:
+      container:
+        args:
+        - cli.py
+        - --generate
+        - --prepare
+        - --save_prompt
+        - --upload
+        image: docker.io/hiyt/tripee-dataset-creator:0.2
+        resources:
+          cpuLimit: 0.5
+          memoryLimit: 2.0
+    exec-gemini-finetuner:
+      container:
+        args:
+        - cli.py
+        - --train
+        image: docker.io/hiyt/tripee-gemini-finetuner:0.2
+pipelineInfo:
+  name: ml-pipeline
+root:
+  dag:
+    tasks:
+      data-creator:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-data-creator
+        taskInfo:
+          name: Data Creator
+      gemini-finetuner:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-gemini-finetuner
+        dependentTasks:
+        - data-creator
+        taskInfo:
+          name: Gemini Finetuner
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.3.0

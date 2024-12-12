@@ -1,0 +1,31 @@
+# PIPELINE DEFINITION
+# Name: data-creator-pipeline
+components:
+  comp-data-creator:
+    executorLabel: exec-data-creator
+deploymentSpec:
+  executors:
+    exec-data-creator:
+      container:
+        args:
+        - python
+        - cli.py
+        - --generate
+        - --prepare
+        - --save_prompt
+        - --upload
+        image: docker.io/hiyt/tripee-data-creator:0.1
+pipelineInfo:
+  name: data-creator-pipeline
+root:
+  dag:
+    tasks:
+      data-creator:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-data-creator
+        taskInfo:
+          name: data-creator
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.3.0

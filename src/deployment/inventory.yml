@@ -1,0 +1,23 @@
+all:
+    vars:
+      ansible_user: sa_113520311491334265587
+      ansible_ssh_private_key_file: "../../secrets/ssh-key-deployment"
+      gcp_service_account_file: "../../secrets/deployment.json"
+      gcp_service_account_email: "deployment@ac215-3h2b-yuantang.iam.gserviceaccount.com"
+      gcp_auth_kind: "serviceaccount"
+      gcp_scopes: "https://www.googleapis.com/auth/compute"
+      gcp_project: "ac215-3h2b-yuantang"
+      docker_id: "hiyt"
+      gcp_region: "us-central1"
+      gcp_zone: "us-central1-a"
+      docker_network_name: "tripee-network"
+      persistent_disk_name: "tripee-app-demo-disk"
+      persistent_disk_size: 50
+      machine_instance_name: "tripee-app-demo"
+      machine_type: "n2d-standard-2"
+      machine_disk_size: 50
+
+    children:
+        appserver:
+            hosts:
+                104.197.180.86:

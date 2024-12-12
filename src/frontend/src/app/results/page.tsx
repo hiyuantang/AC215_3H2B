@@ -15,7 +15,7 @@ const generateSessionId = () => {
 
 const fetchIntegratedResponse = async (queryParams, sessionId) => {
     try {
-        const response = await fetch('http://localhost:9000/llm-sf/integrated-response', {
+        const response = await fetch('/api/llm-sf/integrated-response', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
