@@ -1,0 +1,50 @@
+name: Build, Lint, and Test LLM-RAG Service
+
+on:
+  push:
+    branches:
+      - main
+      - milestone4
+  pull_request:
+    branches:
+      - main
+      - milestone4
+
+jobs:
+  llm-rag:
+    name: Build, Lint, and Test LLM-RAG Service
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Build Docker image
+      working-directory: src/llm-rag
+      run: docker build --no-cache -t llm-rag .
+    
+    - name: Run linting
+      working-directory: src/llm-rag
+      run: |
+        docker run --rm \
+          -v ${{ github.workspace }}:/app \
+          --user root \
+          --entrypoint /bin/bash \
+          llm-rag \
+          -c "cd /app/src/llm-rag && PYTHONPATH=/app/src/llm-rag pipenv --python 3.10 install --dev && PYTHONPATH=/app/src/llm-rag pipenv run flake8 --config=flake8.ini ."
+
+    - name: Run tests with coverage
+      working-directory: src/llm-rag
+      run: |
+        docker run --rm \
+          -v ${{ github.workspace }}:/app \
+          --user root \
+          --entrypoint /bin/bash \
+          llm-rag \
+          -c "cd /app/src/llm-rag && PYTHONPATH=/app/src/llm-rag pipenv --python 3.10 install --dev && PYTHONPATH=/app/src/llm-rag pipenv run pytest tests/ -v --cov=. --cov-report=html"
+
+    - name: Upload HTML coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report-html
+        path: src/llm-rag/htmlcov/

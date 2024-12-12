@@ -1,0 +1,29 @@
+networks:
+    default:
+        name: tripee-network
+        external: true
+services:
+    llm-rag-cli:
+        image: llm-rag-cli
+        container_name: llm-rag-cli
+        volumes:
+            - ../../secrets:/secrets
+            - ../llm-rag:/app
+        environment:
+            GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
+            GCP_PROJECT: $GCP_PROJECT
+            GCP_LOCATION: $GCP_LOCATION
+            CHROMADB_HOST: llm-rag-chromadb
+            CHROMADB_PORT: 8000
+        depends_on:
+            - chromadb
+    chromadb:
+        image: chromadb/chroma:0.5.20
+        container_name: llm-rag-chromadb
+        ports:
+            - 8000:8000
+        volumes:
+            - ./docker-volumes/chromadb:/chroma/chroma
+        environment:
+            - IS_PERSISTENT=TRUE
+            - ANONYMIZED_TELEMETRY=FALSE

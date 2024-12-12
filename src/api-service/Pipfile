@@ -1,0 +1,30 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+flake8 = "*"
+pytest = "*"
+pytest-cov = "*"  
+pytest-mock = "*"  
+
+[packages]
+user-agent = "*"
+requests = "*"
+google-cloud-storage = "*"
+google-generativeai = "*"
+google-cloud-aiplatform = "*"
+pandas = "*"
+geopy = "*"
+uvicorn = "*"
+fastapi = "*"
+python-multipart = "*"
+pillow = "*"
+chromadb = "==0.5.20"
+tensorflow = "==2.17.0"
+pytest = "*"
+pytest-cov = "*"
+
+[requires]
+python_version = "3.10"

@@ -1,0 +1,56 @@
+---
+- name: "Build docker images and push them to Dockerhub"
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: "Get timestamp for docker tag"
+    shell: "(date +%Y%m%d%H%M%S)"
+    register: tag
+  - name: Print tag
+    debug:
+      var: tag
+  - name: Build frontend container image
+    community.docker.docker_image:
+      build:
+        path: /frontend
+        platform: linux/amd64/v2
+        args:
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: "AIzaSyBPKHWNSuhbQwuQmmCZiLZfHjl4NgfBnNU"
+      name: docker.io/{{ docker_id }}/tripee-frontend:{{ tag.stdout}}
+      source: build
+  - name: Push frontend image to Dockerhub
+    community.general.docker_image:
+      name: docker.io/{{ docker_id }}/tripee-frontend:{{ tag.stdout}}
+      repository: docker.io/{{ docker_id }}/tripee-frontend:{{ tag.stdout}}
+      push: yes
+      source: local
+  - name: Build api-service container image
+    community.general.docker_image:
+      build:
+        path: /api-service
+        platform: linux/amd64/v2
+      name: docker.io/{{ docker_id }}/tripee-api-service:{{ tag.stdout}}
+      source: build
+  - name: Push api-service image to Dockerhub
+    community.general.docker_image:
+      name: docker.io/{{ docker_id }}/tripee-api-service:{{ tag.stdout}}
+      repository: docker.io/{{ docker_id }}/tripee-api-service:{{ tag.stdout}}
+      push: yes
+      source: local
+  - name: Build vector-db-cli container image
+    community.general.docker_image:
+      build:
+        path: /llm-rag
+        platform: linux/amd64/v2
+      name: docker.io/{{ docker_id }}/tripee-llm-rag:{{ tag.stdout}}
+      source: build
+  - name: Push vector-db-cli image to Dockerhub
+    community.general.docker_image:
+      name: docker.io/{{ docker_id }}/tripee-llm-rag:{{ tag.stdout}}
+      repository: docker.io/{{ docker_id }}/tripee-llm-rag:{{ tag.stdout}}
+      push: yes
+      source: local
+  - name: "Save docker tag"
+    shell: echo {{ tag.stdout}} > .docker-tag
+  - name: "Remove all unused containers"
+    shell: docker system prune -a
